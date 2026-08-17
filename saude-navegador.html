@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saúde Palhoça — Unidades e Coordenações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#152420;--ink2:#3a4a45;--mut:#6b7d77;
+    --page:#eef2f1;--card:#fff;--line:#d7e0dd;--soft:#fbfdfc;
+    --radius:16px;--shadow:0 1px 2px rgba(20,40,35,.05),0 8px 24px rgba(20,40,35,.07);
+    --ok:#2f9e44;--warn:#c9770a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--page);
+    line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:40px}
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px}
+
+  /* top bar */
+  .bar{position:sticky;top:0;z-index:30;background:rgba(238,242,241,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .bar .wrap{display:flex;align-items:center;gap:10px;padding:10px 16px}
+  .back{display:none;align-items:center;gap:6px;font-weight:600;font-size:14px;cursor:pointer;
+    color:var(--ink);border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px}
+  .back:hover{border-color:var(--ink)}
+  .back svg{width:14px;height:14px}
+  .crumb{font-size:13px;color:var(--mut);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .crumb b{color:var(--ink2);font-weight:600}
+  .tbtn{font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);padding:8px 11px;border-radius:10px}
+  .tbtn.primary{background:#0d3b34;color:#fff;border-color:#0d3b34}
+
+  /* header */
+  header.hero{padding:26px 0 6px}
+  .eyebrow{font-family:'Archivo';font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:11.5px;color:#c07807}
+  h1{font-family:'Archivo';font-weight:800;font-size:clamp(24px,5vw,34px);margin:7px 0 4px;letter-spacing:-.01em}
+  .lead{color:var(--ink2);font-size:14.5px;max-width:60ch}
+
+  /* search */
+  .search{margin:16px 0 4px;position:relative}
+  .search input{width:100%;font-family:'Inter';font-size:15px;padding:13px 14px 13px 40px;border-radius:12px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink);outline:none}
+  .search input:focus{border-color:#0d6e5d;box-shadow:0 0 0 3px rgba(13,110,93,.12)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--mut)}
+
+  /* blocks grid */
+  .blocks{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+  .block{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+    box-shadow:var(--shadow);cursor:pointer;text-align:left;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
+  .block:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(20,40,35,.12)}
+  .block .dot{width:34px;height:34px;border-radius:10px;background:var(--c);opacity:.14;position:absolute;top:16px;right:16px}
+  .block .ic{width:34px;height:34px;border-radius:10px;background:var(--c);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo';font-weight:800;font-size:15px}
+  .block h3{font-family:'Archivo';font-weight:700;font-size:16px;margin:12px 0 2px;letter-spacing:-.01em}
+  .block .cnt{font-size:13px;color:var(--mut)}
+  .block .arrow{margin-top:10px;font-size:13px;font-weight:600;color:var(--c)}
+
+  /* list rows */
+  .list{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+  .row{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;
+    padding:13px 15px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:.12s}
+  .row:hover{border-color:var(--c);transform:translateX(2px)}
+  .row .rn{font-weight:600;font-size:14.5px;flex:1}
+  .row .rp{font-size:12.5px;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row .chev{color:var(--mut);width:16px;height:16px;flex-shrink:0}
+  .row .rp.todo{color:var(--warn);font-style:italic}
+  .badge{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c);
+    background:color-mix(in srgb,var(--c) 12%,#fff);padding:2px 7px;border-radius:6px}
+
+  /* detail */
+  .detail{margin-top:16px}
+  .dcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .dhead{background:var(--c);color:#fff;padding:18px 20px}
+  .dhead .k{font-size:11px;text-transform:uppercase;letter-spacing:.09em;opacity:.8;font-weight:600}
+  .dhead h2{font-family:'Archivo';font-weight:700;font-size:20px;margin:3px 0 0;letter-spacing:-.01em}
+  .dbody{padding:6px 20px 18px}
+  .info{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #eef3f1}
+  .info:last-child{border-bottom:0}
+  .info .il{width:96px;flex-shrink:0;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600;padding-top:2px}
+  .info .iv{font-size:14.5px;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+  .info .iv a{color:#0d6e5d;font-weight:600;text-decoration:none}
+  .info .iv a:hover{text-decoration:underline}
+  input.edit,textarea.edit{width:100%;font-family:'Inter';font-size:14.5px;font-weight:500;color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--soft);outline:none;resize:vertical}
+  input.edit:focus,textarea.edit:focus{border-color:var(--c);background:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent)}
+  input.edit.filled,textarea.edit.filled{background:#f2f9f4;border-color:#bfe3c9}
+  .editgrid{margin-top:8px}
+  .editgrid .el{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600;margin:12px 0 5px}
+  .callbtns{display:flex;gap:9px;margin:14px 0 2px;flex-wrap:wrap}
+  .callbtns a{flex:1;text-align:center;min-width:130px;font-weight:600;font-size:13.5px;text-decoration:none;
+    padding:11px;border-radius:10px;border:1px solid var(--line);color:var(--ink);background:var(--soft)}
+  .callbtns a:hover{border-color:var(--c);color:var(--c)}
+
+  .vinc{margin-top:2px}
+  .vinc .vt{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600;margin:14px 0 6px}
+  .vrow{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid #f1f5f3}
+  .vrow:last-child{border-bottom:0}.vrow .vn{color:var(--ink2);font-weight:500}.vrow .vp{color:var(--mut)}
+
+  .note{font-size:12px;color:var(--mut);background:var(--soft);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:14px}
+  footer{margin-top:30px;color:var(--mut);font-size:12px;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+  .hidden{display:none!important}
+  @media(max-width:560px){.blocks{grid-template-columns:1fr}.info .il{width:80px}}
+  @media print{.bar,.search,.callbtns{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <div class="back" id="back" onclick="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Voltar
+  </div>
+  <div class="crumb" id="crumb"></div>
+  <button class="tbtn" onclick="window.print()">PDF</button>
+  <button class="tbtn primary" onclick="baixar()">Baixar</button>
+</div></div>
+
+<div class="wrap">
+  <header class="hero" id="hero">
+    <div class="eyebrow">Prefeitura de Palhoça · SC</div>
+    <h1>Rede de Saúde — Unidades e Coordenações</h1>
+    <p class="lead">Toque em um bloco para ver as unidades. Toque numa unidade para ver contato, endereço e mapa — e preencher responsável, ramal e e-mail.</p>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input id="q" placeholder="Buscar unidade (ex.: Ponte do Imaruim, UPA, CAPS...)" oninput="doSearch(this.value)">
+    </div>
+  </header>
+
+  <div id="view"></div>
+
+  <footer>Ferramenta de trabalho interna · dados via Google Places/CNES — confira no cadastro oficial da SMS · edições ficam neste arquivo ao usar “Baixar”.</footer>
+</div>
+
+<script src="assets/sync.js"></script>
+<script>
+var STATE = /*S*/{}/*E*/;   // edições do usuário: { unitId: {resp,ramal,email,obs} }
+
+var GMAPS='https://www.google.com/maps/search/?api=1&query=';
+
+// ---- Dados ----
+var CATS=[
+  {id:'ubs',name:'Unidades Básicas de Saúde',short:'UBS',c:'#1f6feb',
+   units:[
+    ['ubs1','UBS Alto Aririú','R. Ver. Rogério da Silva, s/n — Alto Aririú','(48) 3047-5579','Seg–Sex 8h–12h, 13h–17h',-27.6793578,-48.7109596],
+    ['ubs2','UBS Aririú da Formiga','R. Francisco Melo, 178 — Aririú da Formiga','(48) 3047-5594','Seg–Sex 7h–12h, 13h–17h',-27.6916408,-48.6588364],
+    ['ubs3','UBS Barra do Aririú','R. Genésio Francisco Martins, s/n — Barra do Aririú','(48) 3047-5593','Seg–Sex 8h–12h, 13h–17h',-27.679797,-48.641981],
+    ['ubs4','UBS Bela Vista','R. José Cosme Pamplona, 1447 — Bela Vista','(48) 3047-5578','Seg–Sex 7h–19h',-27.6554354,-48.682391],
+    ['ubs5','UBS Brejaru','R. Monsenhor Roberto Landel de Moura — Jardim Eldorado','(48) 3047-5597','Seg–Sex 8h–12h, 13h–17h',-27.6215043,-48.6676781],
+    ['ubs6','UBS Cambirela (Furadinho)','R. Arcanjo Cândido da Silva — Praia de Fora','(48) 3047-5584','Seg–Sex 8h–12h, 13h–17h',-27.7302425,-48.6399211],
+    ['ubs7','UBS Central','R. Amaro Ferreira de Macedo, 160 — Centro','(48) 3047-5537','Seg–Sex 7h–20h',-27.6448813,-48.6700363],
+    ['ubs8','UBS Enseada de Brito','R. Nossa Senhora do Rosário, s/n — Enseada de Brito','(48) 3047-5539','Seg–Sex 8h–17h',-27.7810278,-48.6325494],
+    ['ubs9','UBS Frei Damião','R. Afonso Pena — Brejaru','(48) 3047-5592','Seg–Sex 7h–17h',-27.6144558,-48.6685992],
+    ['ubs10','UBS Guarda do Cubatão','R. João Vieira, 10 — Guarda do Cubatão','(48) 3047-5574','Seg–Sex 8h–17h',-27.6903787,-48.6808712],
+    ['ubs11','UBS Jardim Eldorado','R. Vítor Meireles, s/n — Jardim Eldorado','(48) 3047-5583','Seg–Sex 8h–17h',-27.6265115,-48.6645252],
+    ['ubs12','UBS Madri','Av. das Tipuanas, s/n — Loteamento Madri','(48) 3047-5582','Seg–Sex 7h–17h',-27.6416795,-48.7033273],
+    ['ubs13','UBS Médio Aririú','Av. Bom Jesus de Nazaré — Médio Aririú','(48) 3047-5544','Seg–Sex 7h–17h',-27.6763646,-48.6880153],
+    ['ubs14','UBS Pachecos','R. Nelson Floriano Campos, s/n — Pachecos','(48) 3047-5542','—',-27.6801188,-48.668523],
+    ['ubs15','UBS Passa Vinte','R. Salvador Acisclo da Silveira, s/n — Passa Vinte','(48) 3047-5541','Seg–Sex 7h–17h',-27.6327141,-48.671961],
+    ['ubs16','UBS Passagem do Maciambú','R. das Saudades, 6 — Passagem do Maciambú','(48) 3047-5596','Seg–Sex 7h–17h',-27.8290202,-48.6157469],
+    ['ubs17','UBS Pinheira','R. Servidão Olga da Silva — Enseada da Pinheira','(48) 3047-5573','Seg–Sex 8h–17h',-27.886852,-48.5858391],
+    ['ubs18','UBS Ponte do Imaruim','R. Trinta e Um de Março, s/n — Ponte do Imaruim','(48) 3047-5549','Seg–Sex 7h–20h',-27.6348501,-48.6463632],
+    ['ubs19','UBS Rio Grande','R. Arcânjo Cunha, 165 — Rio Grande','(48) 3047-5543','Seg–Sex 7h–17h',-27.6654027,-48.6597533],
+    ['ubs20','UBS São Sebastião','R. dos Açores, 240 — São Sebastião','(48) 3047-5538','Seg–Sex 7h–17h',-27.6427369,-48.7152172],
+    ['ubs21','UBS Vila Nova','R. Videiras — Barra do Aririú','(48) 3047-5588','Seg–Sex 7h–17h',-27.6833154,-48.6557041]
+   ]},
+  {id:'upa',name:'UPA — Pronto Atendimento',short:'UPA',c:'#d1495b',
+   units:[
+    ['upa1','UPA Centro / Bela Vista 24h','R. Santa Marta (BR-282) — Bela Vista','(48) 3047-5581','24 horas',-27.6591499,-48.6841821],
+    ['upa2','UPA Sul 24h (Pinheira)','R. Radiante (Passagem do Sonho) — Enseada da Pinheira','(48) 3047-5510','24 horas',-27.8414727,-48.5911683]
+   ]},
+  {id:'caps',name:'CAPS — Saúde Mental',short:'CAPS',c:'#2f9e44',
+   units:[
+    ['caps1','CAPS II','R. Irmão Scheidt, 45 — Centro','(48) 3047-5535','Seg–Sex 7h–19h',-27.648117,-48.6696097],
+    ['caps2','CAPS Infantil (CAPSi)','R. Graciliano Carlos de Quadros, 180 — Centro','(48) 3047-5577','Seg–Sex 7h–18h',-27.6544808,-48.6753137],
+    ['caps3','CAPS AD (Álcool e Drogas)','R. Indiana, 86 — Passa Vinte','(48) 3047-5534','Seg–Sex 8h–18h',-27.6396143,-48.6696239]
+   ]},
+  {id:'esp',name:'Especializada & Apoio',short:'ESP',c:'#0d6e5d',
+   units:[
+    ['esp0','SMS — Secretaria Municipal de Saúde','Av. Atílio Pedro Pagani, 855 — Passa Vinte','(48) 3047-5564','Seg–Sex 7h–19h',-27.6413891,-48.6787996],
+    ['esp1','Farmácia de Alto Custo (CEAF)','R. Cel. Bernardino Machado, 290 — Centro','(48) 3047-5540','Seg,Ter,Qui,Sex 7h30–18h30',-27.6473365,-48.6700326],
+    ['esp2','CEAP — Aconselhamento e Prevenção','R. Bernardo Scheidt — Centro  (verificar: web antiga aponta R. 31 de Março)','(48) 3047-5547','Seg–Sex 7h–19h',-27.6488288,-48.6666107],
+    ['esp3','CEO — Especialidades Odontológicas','Av. Elza Lucchi, 170 — Centro','(48) 3047-5533','Seg–Sex 7h–18h',-27.6392945,-48.6646328],
+    ['esp4','SAMU — base Palhoça (verificar)','R. Nilma Emília Martins — Nova Palhoça','—','—',-27.6723904,-48.6622462],
+    ['esp5','SAMU — ponto Passa Vinte (verificar)','R. Ocidente, 132 — Passa Vinte','—','—',-27.6399928,-48.6709027],
+    ['esp6','Almoxarifado da Saúde','Endereço não localizado — preencher','—','—',null,null],
+    ['esp7','Setor de Transporte da Saúde','Endereço não localizado — preencher','—','—',null,null]
+   ]}
+];
+
+// Coordenações (organograma) — bloco separado, com unidades vinculadas
+var COORD={id:'coord',name:'Coordenações da SMS',short:'COORD',c:'#0d3b34',
+  items:[
+    ['co1','Atenção Primária (APS)','21 UBS',['21 Unidades Básicas de Saúde']],
+    ['co2','Atenção Especializada','Ambulatorial',['Policlínica (UNISUL)','CEO','CEAP','Laboratório Municipal']],
+    ['co3','Urgência e Emergência','UPA / SAMU',['UPA Centro','UPA Sul','SAMU','PA Pinheira (se ativo)']],
+    ['co4','Saúde Mental (RAPS)','CAPS',['CAPS II','CAPSi','CAPS AD']],
+    ['co5','Vigilância em Saúde','Diretoria',['Vig. Epidemiológica','Vig. Sanitária','Vig. Ambiental','Vig. do Trabalhador']],
+    ['co6','Vigilância Ambiental','Coordenação',['Zoonoses/vetores','VIGIAGUA','Fiscalização ambiental']],
+    ['co7','Assistência Farmacêutica','Medicamentos',['Farmácia de Alto Custo (CEAF)','Farmácia Básica (UBS)','CAF']],
+    ['co8','Regulação, Controle e Avaliação','Gestão',[]],
+    ['co9','Gestão do Trabalho e Educação','Gestão',[]],
+    ['co10','Almoxarifado da Saúde','Apoio',[]],
+    ['co11','Setor de Transporte','Apoio',[]]
+  ]};
+
+var view=document.getElementById('view'), crumb=document.getElementById('crumb'),
+    hero=document.getElementById('hero'), back=document.getElementById('back');
+var stack=[]; // navegação
+
+function findCat(id){ if(id==='coord')return COORD; return CATS.filter(function(c){return c.id===id})[0]; }
+function findUnit(cid,uid){ var c=findCat(cid); var arr=cid==='coord'?c.items:c.units; return arr.filter(function(u){return u[0]===uid})[0]; }
+
+function home(){
+  stack=[]; back.style.display='none'; hero.classList.remove('hidden');
+  crumb.innerHTML='<b>Início</b>';
+  var blocks=CATS.concat([COORD]);
+  var h='<div class="blocks">';
+  blocks.forEach(function(c){
+    var n=(c.id==='coord'?c.items.length:c.units.length);
+    h+='<button class="block" style="--c:'+c.c+'" onclick="openCat(\''+c.id+'\')">'+
+       '<div class="ic">'+c.short+'</div>'+
+       '<h3>'+c.name+'</h3><div class="cnt">'+n+(c.id==='coord'?' coordenações':' unidades')+'</div>'+
+       '<div class="arrow">Ver &rsaquo;</div></button>';
+  });
+  h+='</div>';
+  view.innerHTML=h;
+}
+
+function openCat(id){
+  var c=findCat(id); stack=[{t:'cat',id:id}]; back.style.display='inline-flex'; hero.classList.add('hidden');
+  crumb.innerHTML='<b>'+c.name+'</b>';
+  var h='<div class="list">';
+  if(id==='coord'){
+    c.items.forEach(function(u){
+      var f=STATE[u[0]]&&STATE[u[0]].resp?STATE[u[0]].resp:'';
+      h+=row(id,u[0],u[1], f?f:'sem responsável', f?'':'todo', u[2]);
+    });
+  }else{
+    c.units.forEach(function(u){
+      h+=row(id,u[0],u[1], u[3], u[3]==='—'?'todo':'', '');
+    });
+  }
+  h+='</div>';
+  view.innerHTML=h;
+}
+function row(cid,uid,name,right,cls,badge){
+  return '<div class="row" style="--c:'+findCat(cid).c+'" onclick="openUnit(\''+cid+'\',\''+uid+'\')">'+
+    '<span class="rn">'+name+(badge?' <span class="badge">'+badge+'</span>':'')+'</span>'+
+    '<span class="rp '+(cls||'')+'">'+right+'</span>'+
+    '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>';
+}
+
+function openUnit(cid,uid){
+  var c=findCat(cid); stack=[{t:'cat',id:cid},{t:'unit',id:cid,uid:uid}];
+  back.style.display='inline-flex'; hero.classList.add('hidden');
+  var st=STATE[uid]||{};
+  if(cid==='coord'){
+    var it=findUnit(cid,uid);
+    crumb.innerHTML='<b>'+c.name+'</b> › '+it[1];
+    var vinc=it[3].map(function(v){return '<div class="vrow"><span class="vn">'+v+'</span><span class="vp"></span></div>'}).join('');
+    view.innerHTML=
+     '<div class="detail"><div class="dcard"><div class="dhead" style="--c:'+c.c+'">'+
+      '<div class="k">Coordenação</div><h2>'+it[1]+'</h2></div><div class="dbody">'+
+      editBlock(uid,st,true)+
+      (vinc?'<div class="vinc"><div class="vt">Unidades / frentes vinculadas</div>'+vinc+'</div>':'')+
+      '</div></div></div>';
+  }else{
+    var u=findUnit(cid,uid);
+    crumb.innerHTML='<b>'+c.name+'</b> › '+u[1];
+    var maps=(u[5]!=null)?'<a href="'+GMAPS+u[5]+','+u[6]+'" target="_blank">Abrir no mapa</a>':'';
+    var tel=(u[3]&&u[3]!=='—')?'<a href="tel:'+u[3].replace(/[^0-9]/g,'')+'">'+u[3]+'</a>':'<span style="color:var(--warn)">a confirmar</span>';
+    view.innerHTML=
+     '<div class="detail"><div class="dcard"><div class="dhead" style="--c:'+c.c+'">'+
+      '<div class="k">'+c.name+'</div><h2>'+u[1]+'</h2></div><div class="dbody">'+
+      info('Endereço',u[2])+
+      info('Telefone',tel)+
+      info('Horário',u[4]||'—')+
+      '<div class="callbtns">'+
+        (u[3]&&u[3]!=='—'?'<a href="tel:'+u[3].replace(/[^0-9]/g,'')+'">Ligar</a>':'')+
+        (maps?'<a href="'+GMAPS+u[5]+','+u[6]+'" target="_blank">Ver no mapa</a>':'')+
+      '</div>'+
+      editBlock(uid,st,false)+
+      '</div></div></div>';
+  }
+}
+function info(l,v){return '<div class="info"><div class="il">'+l+'</div><div class="iv">'+v+'</div></div>';}
+
+function editBlock(uid,st,coord){
+  var respLabel=coord?'Coordenador(a) / responsável':'Responsável / coordenador(a)';
+  return '<div class="editgrid">'+
+    '<div class="el">'+respLabel+'</div>'+
+    '<input class="edit" placeholder="nome" value="'+esc(st.resp||'')+'" oninput="setF(\''+uid+'\',\'resp\',this.value,this)">'+
+    '<div class="el">Telefone direto / ramal</div>'+
+    '<input class="edit" placeholder="ramal ou celular" value="'+esc(st.ramal||'')+'" oninput="setF(\''+uid+'\',\'ramal\',this.value,this)">'+
+    '<div class="el">E-mail</div>'+
+    '<input class="edit" placeholder="email@palhoca.sc.gov.br" value="'+esc(st.email||'')+'" oninput="setF(\''+uid+'\',\'email\',this.value,this)">'+
+    '<div class="el">Observações</div>'+
+    '<textarea class="edit" rows="2" placeholder="anotações" oninput="setF(\''+uid+'\',\'obs\',this.value,this)">'+esc(st.obs||'')+'</textarea>'+
+    '</div>';
+}
+function setF(uid,k,v,el){ STATE[uid]=STATE[uid]||{}; STATE[uid][k]=v; if(el)el.classList.toggle('filled',v.trim().length>0); if(window.SiteSync)SiteSync.save(STATE); }
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function goBack(){
+  if(stack.length>=2){ openCat(stack[0].id); }
+  else home();
+}
+function doSearch(q){
+  q=q.trim().toLowerCase(); if(!q){ home(); return; }
+  back.style.display='inline-flex'; hero.classList.add('hidden'); crumb.innerHTML='<b>Busca:</b> '+esc(q);
+  var res=[];
+  CATS.forEach(function(c){ c.units.forEach(function(u){ if(u[1].toLowerCase().indexOf(q)>-1||(u[2]||'').toLowerCase().indexOf(q)>-1) res.push([c,u]); }); });
+  COORD.items.forEach(function(u){ if(u[1].toLowerCase().indexOf(q)>-1) res.push([COORD,u]); });
+  var h='<div class="list">';
+  if(!res.length) h+='<div class="note">Nada encontrado para “'+esc(q)+'”.</div>';
+  res.forEach(function(p){ var c=p[0],u=p[1];
+    h+='<div class="row" style="--c:'+c.c+'" onclick="openUnit(\''+c.id+'\',\''+u[0]+'\')">'+
+       '<span class="rn">'+u[1]+' <span class="badge">'+c.short+'</span></span>'+
+       '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>';
+  });
+  h+='</div>'; view.innerHTML=h;
+  // mantém o que foi digitado
+  document.getElementById('q').value=q;
+}
+
+function baixar(){
+  var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  html=html.replace(/\/\*S\*\/[\s\S]*?\/\*E\*\//, '/*S*/'+JSON.stringify(STATE)+'/*E*/');
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Saude_Palhoca_preenchido.html'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+home();
+
+/* ---- sincronização entre aparelhos ---- */
+(function(){
+  var bar=document.createElement('div');
+  bar.id='syncBar';
+  bar.style.cssText='position:fixed;left:0;right:0;bottom:0;text-align:center;font:12px/1.4 ui-monospace,monospace;padding:8px 12px;background:rgba(255,255,255,.96);border-top:1px solid rgba(0,0,0,.1);cursor:pointer;z-index:9999';
+  bar.textContent='Carregando…';
+  document.body.appendChild(bar);
+  var cores={ok:'#1E7A46',aviso:'#B98A00',erro:'#C0392B',salvando:'#B98A00'};
+  SiteSync.init({page:'saude-navegador',onStatus:function(t,c){bar.textContent=t;bar.style.color=cores[c]||'#555';}});
+  bar.addEventListener('click',function(){ if(!SiteSync.hasToken()) SiteSync.askToken(); });
+  SiteSync.load().then(function(d){
+    if(d){ Object.keys(d).forEach(function(u){ STATE[u]=d[u]; }); if(typeof home==='function') home(); }
+    if(!SiteSync.hasToken()) bar.textContent='Toque aqui para ativar a sincronização entre aparelhos.';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico da Peça — 2ª Fase OAB Penal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Spectral:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde:#1E3A2F;
+  --verde-escuro:#152A21;
+  --verde-claro:#2C5243;
+  --papel:#F5F0E2;
+  --papel-sombra:#E4DCC6;
+  --tinta:#26221A;
+  --tinta-suave:#5C554A;
+  --latao:#C9A227;
+  --carimbo:#A33B2E;
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--verde);
+  background-image:radial-gradient(ellipse at 50% -20%, var(--verde-claro) 0%, var(--verde) 55%, var(--verde-escuro) 100%);
+  min-height:100vh;
+  font-family:'Spectral',Georgia,serif;
+  color:var(--papel);
+  padding:20px 16px 60px;
+}
+.wrap{max-width:680px;margin:0 auto}
+
+header{text-align:center;margin-bottom:26px;padding-top:8px}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--latao);margin-bottom:10px
+}
+h1{
+  font-family:'Libre Caslon Text',serif;font-weight:700;
+  font-size:clamp(26px,7vw,38px);line-height:1.12;letter-spacing:-.01em
+}
+h1 em{font-style:italic;color:var(--latao)}
+.sub{font-size:15px;font-weight:300;color:#CFDCCF;margin-top:10px;line-height:1.5}
+.rule{width:64px;height:1px;background:var(--latao);margin:18px auto 0;position:relative}
+.rule::after{content:"§";position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  background:var(--verde);padding:0 10px;color:var(--latao);font-family:'Libre Caslon Text',serif;font-size:15px}
+
+.trilha{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+  margin-bottom:18px;min-height:24px;color:#9FB5A4
+}
+.trilha button{
+  background:none;border:none;color:var(--latao);font:inherit;cursor:pointer;
+  padding:4px 2px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(201,162,39,.45)
+}
+.trilha button:focus-visible{outline:2px solid var(--latao);outline-offset:2px;border-radius:3px}
+.trilha .sep{opacity:.5}
+.trilha .atual{color:#E8EFE6}
+
+#palco{position:relative}
+.nivel{animation:entra .28s ease both}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.nivel{animation:none}}
+
+.pergunta{
+  font-family:'Libre Caslon Text',serif;font-size:20px;font-weight:700;
+  margin-bottom:16px;line-height:1.3
+}
+.cartoes{display:flex;flex-direction:column;gap:12px}
+.cartao{
+  display:flex;align-items:flex-start;gap:14px;text-align:left;width:100%;
+  background:var(--papel);color:var(--tinta);border:none;border-radius:var(--radius);
+  padding:16px 16px 15px;cursor:pointer;
+  box-shadow:0 1px 0 var(--papel-sombra) inset, 0 4px 14px rgba(0,0,0,.28);
+  border-left:5px solid var(--latao);
+  transition:transform .12s ease;
+  font-family:inherit;
+}
+.cartao:active{transform:scale(.985)}
+.cartao:focus-visible{outline:3px solid var(--latao);outline-offset:2px}
+.cartao .ico{font-size:24px;line-height:1;margin-top:2px;flex:none}
+.cartao .txt b{display:block;font-family:'Libre Caslon Text',serif;font-size:16.5px;font-weight:700;margin-bottom:3px}
+.cartao .txt span{font-size:14px;color:var(--tinta-suave);line-height:1.45;font-weight:400}
+.cartao .seta{margin-left:auto;align-self:center;color:var(--latao);font-size:18px;flex:none}
+
+.autos{
+  background:var(--papel);color:var(--tinta);border-radius:var(--radius);
+  padding:26px 22px 24px;position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.35);
+  border-top:6px solid var(--carimbo);
+}
+.autos::before{
+  content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;
+  background-image:radial-gradient(circle, rgba(38,34,26,.22) 2.4px, transparent 3px);
+  background-size:2px 34px;background-repeat:repeat-y;
+}
+.autos-rotulo{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--carimbo);margin-bottom:8px
+}
+.autos h2{
+  font-family:'Libre Caslon Text',serif;font-size:clamp(21px,5.6vw,27px);
+  line-height:1.15;margin-bottom:4px;padding-right:86px
+}
+.fundamento{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--tinta-suave);
+  margin-bottom:18px;padding-right:86px
+}
+.carimbo-prazo{
+  position:absolute;top:22px;right:14px;transform:rotate(6deg);
+  border:2.5px solid var(--carimbo);color:var(--carimbo);border-radius:6px;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;text-align:center;
+  padding:7px 10px 6px;font-size:11px;letter-spacing:.08em;line-height:1.25;
+  opacity:.88;background:rgba(163,59,46,.05)
+}
+.carimbo-prazo b{display:block;font-size:17px;letter-spacing:.02em}
+.secao{margin-bottom:16px}
+.secao h3{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--latao);filter:brightness(.72);margin-bottom:6px
+}
+.secao p,.secao li{font-size:15px;line-height:1.55}
+.secao ul{list-style:none}
+.secao li{padding-left:18px;position:relative;margin-bottom:5px}
+.secao li::before{content:"›";position:absolute;left:2px;color:var(--carimbo);font-weight:600}
+.dica{
+  background:rgba(201,162,39,.13);border-left:4px solid var(--latao);
+  border-radius:0 8px 8px 0;padding:12px 14px;font-size:14.5px;line-height:1.55;margin-bottom:16px
+}
+.dica b{font-family:'Libre Caslon Text',serif}
+
+/* ---------- modelo da peça ---------- */
+details.modelo{
+  border:1.5px dashed rgba(38,34,26,.35);border-radius:8px;
+  background:#FBF8EE;overflow:hidden
+}
+details.modelo summary{
+  list-style:none;cursor:pointer;padding:13px 16px;
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--carimbo);font-weight:600;
+  display:flex;align-items:center;gap:10px;user-select:none
+}
+details.modelo summary::-webkit-details-marker{display:none}
+details.modelo summary::before{content:"✎";font-size:15px}
+details.modelo summary::after{content:"abrir";margin-left:auto;font-size:10px;opacity:.6;letter-spacing:.15em}
+details.modelo[open] summary::after{content:"fechar"}
+details.modelo[open] summary{border-bottom:1.5px dashed rgba(38,34,26,.25)}
+details.modelo pre{
+  white-space:pre-wrap;word-wrap:break-word;
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7;
+  padding:18px 16px 20px;color:var(--tinta);
+  background-image:repeating-linear-gradient(transparent,transparent 20.2px,rgba(38,34,26,.045) 21.25px);
+}
+details.modelo .nota-modelo{
+  font-size:12px;font-family:'Spectral',serif;font-style:italic;
+  color:var(--tinta-suave);padding:0 16px 14px;line-height:1.5
+}
+
+/* ---------- estatísticas ---------- */
+details.stats{
+  background:rgba(0,0,0,.22);border:1px solid rgba(201,162,39,.35);
+  border-radius:var(--radius);margin-bottom:20px;overflow:hidden
+}
+details.stats summary{
+  list-style:none;cursor:pointer;padding:14px 16px;user-select:none;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--latao);display:flex;align-items:center;gap:10px
+}
+details.stats summary::-webkit-details-marker{display:none}
+details.stats summary::after{content:"+";margin-left:auto;font-size:16px}
+details.stats[open] summary::after{content:"–"}
+.stats-corpo{padding:4px 16px 18px}
+.stats-nota{font-size:13.5px;color:#CFDCCF;line-height:1.5;margin-bottom:14px;font-weight:300}
+.barra-linha{margin-bottom:12px}
+.barra-topo{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13.5px;margin-bottom:4px
+}
+.barra-topo .pct{font-family:'IBM Plex Mono',monospace;color:var(--latao);font-weight:600;font-size:13px}
+.barra-trilho{height:14px;background:rgba(245,240,226,.12);border-radius:7px;overflow:hidden}
+.barra-preenchida{
+  height:100%;border-radius:7px;
+  background:linear-gradient(90deg, var(--latao), #E3C766)
+}
+.barra-preenchida.destaque{background:linear-gradient(90deg, var(--carimbo), #C85B4C)}
+.stats-exames{
+  margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  line-height:2;color:#AFC4B3;letter-spacing:.03em
+}
+.stats-exames b{color:#E8EFE6;font-weight:500}
+.exame-row{
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(245,240,226,.08)
+}
+.exame-row:last-of-type{border-bottom:none}
+.exame-link{
+  display:flex;align-items:baseline;gap:6px;flex:1;min-width:0;text-align:left;
+  background:none;border:none;color:#AFC4B3;font:inherit;letter-spacing:inherit;
+  cursor:pointer;padding:9px 2px;line-height:1.5
+}
+.exame-link:active{background:rgba(201,162,39,.08)}
+.exame-link:focus-visible{outline:2px solid var(--latao);outline-offset:1px;border-radius:4px}
+.exame-link .ir{margin-left:auto;color:var(--latao);font-size:10px;letter-spacing:.12em;white-space:nowrap;opacity:.85}
+.exame-pdf{
+  flex:none;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  color:var(--papel);text-decoration:none;white-space:nowrap;
+  border:1px solid rgba(245,240,226,.35);border-radius:20px;padding:4px 10px
+}
+.exame-pdf:active{background:rgba(245,240,226,.12)}
+.exame-pdf:focus-visible{outline:2px solid var(--latao);outline-offset:1px}
+.stats-fonte{
+  margin-top:12px;font-family:'Spectral',serif;font-style:italic;
+  font-size:12.5px;line-height:1.55;color:#9FB5A4;letter-spacing:0
+}
+.selo-freq{
+  display:inline-block;margin-left:8px;vertical-align:middle;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  background:rgba(163,59,46,.12);color:var(--carimbo);
+  border:1px solid rgba(163,59,46,.45);border-radius:20px;padding:2px 9px;white-space:nowrap
+}
+.acoes{display:flex;gap:10px;margin-top:22px}
+.btn{
+  flex:1;border:none;border-radius:8px;padding:13px 10px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;
+}
+.btn:focus-visible{outline:3px solid var(--latao);outline-offset:2px}
+.btn-volta{background:var(--tinta);color:var(--papel)}
+.btn-inicio{background:transparent;color:var(--tinta);border:1.5px solid var(--tinta-suave)}
+
+footer{
+  text-align:center;margin-top:34px;font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;letter-spacing:.14em;color:#7E9587;text-transform:uppercase
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">2ª fase · OAB · FGV</div>
+  <h1>Diagnóstico da <em>Peça Penal</em></h1>
+  <p class="sub">Comece pelo que aconteceu com o cliente e navegue até a peça cabível — com fundamento, prazo, pedidos e o modelo completo.</p>
+  <div class="rule"></div>
+</header>
+
+<details class="stats" open>
+  <summary>📊 Últimos 10 exames (36º–45º)</summary>
+  <div class="stats-corpo">
+    <p class="stats-nota">Frequência de cada peça na 2ª fase de Direito Penal, do 36º ao 45º Exame de Ordem Unificado (FGV). O 45º (fev/2026) foi o mais recente com resultado divulgado.</p>
+
+    <div class="barra-linha">
+      <div class="barra-topo"><span>Apelação</span><span class="pct">40% · 4×</span></div>
+      <div class="barra-trilho"><div class="barra-preenchida destaque" style="width:40%"></div></div>
+    </div>
+    <div class="barra-linha">
+      <div class="barra-topo"><span>Memoriais</span><span class="pct">20% · 2×</span></div>
+      <div class="barra-trilho"><div class="barra-preenchida" style="width:20%"></div></div>
+    </div>
+    <div class="barra-linha">
+      <div class="barra-topo"><span>Resposta à Acusação</span><span class="pct">20% · 2×</span></div>
+      <div class="barra-trilho"><div class="barra-preenchida" style="width:20%"></div></div>
+    </div>
+    <div class="barra-linha">
+      <div class="barra-topo"><span>Contrarrazões à Apelação</span><span class="pct">10% · 1×</span></div>
+      <div class="barra-trilho"><div class="barra-preenchida" style="width:10%"></div></div>
+    </div>
+    <div class="barra-linha">
+      <div class="barra-topo"><span>Agravo em Execução</span><span class="pct">10% · 1×</span></div>
+      <div class="barra-trilho"><div class="barra-preenchida" style="width:10%"></div></div>
+    </div>
+
+    <div class="stats-exames">
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Memoriais (Alegações Finais Escritas)">45º · fev/2026 — <b>Memoriais</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://oabms.org.br/wp-content/uploads/2026/02/45o-eou.-2a-fase.-caderno-de-prova.-direito-penal.pdf" target="_blank" rel="noopener">prova ↗</a>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2026/03/c9ae6692-254a-4a5f-9aac-a611850b336b.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Apelação">44º · 2025 — <b>Apelação</b> (JECrim)<span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2025/10/b70785f7-46be-4862-8e7b-57348c499f0b.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Contrarrazões à Apelação">43º · 2025 — <b>Contrarrazões à Apelação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2025/06/1eb5df53-7170-4765-91f6-6e4f2b0357a9.pdf" target="_blank" rel="noopener">prova ↗</a>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2025/06/8a847f3d-ed48-4795-bd2e-01b9497699fb.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Resposta à Acusação">42º · 2025 — <b>Resposta à Acusação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2025/02/a830a6c3-aab3-400e-ab6c-ff6585a87d65.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Apelação">41º · 2024 — <b>Apelação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2024/10/e71e65a2-6ba2-4130-aff1-5a5d5da57eac.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Apelação">40º · 2024 — <b>Apelação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2024/06/60fe4a96-03d7-473f-a3dc-8f75bfb1c34b.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Apelação">39º · 2024 — <b>Apelação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2024/02/6024f19b-02e6-4e91-a1b9-a129e068dd17.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Agravo em Execução">38º · 2023 — <b>Agravo em Execução</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://s.oab.org.br/arquivos/2023/09/e1ad87e8-5ff5-4570-b3e1-14d555f93755.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Memoriais (Alegações Finais Escritas)">37º · 2023 — <b>Memoriais</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://oab.fgv.br/arq/640/212961_GABARITO%20JUSTIFICADO%20-%20DIREITO%20PENAL.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <div class="exame-row">
+        <button class="exame-link" data-peca="Resposta à Acusação">36º · 2022 — <b>Resposta à Acusação</b><span class="ir">peça ❯</span></button>
+        <a class="exame-pdf" href="https://oab.fgv.br/arq/639/292527_GABARITO%20JUSTIFICADO%20-%20DIREITO%20PENAL.pdf" target="_blank" rel="noopener">gabarito ↗</a>
+      </div>
+      <p class="stats-fonte">Todos os links são publicações oficiais da OAB/FGV. O PDF de gabarito de cada exame contém o enunciado integral da peça, o padrão de resposta comentado e a distribuição de pontos do espelho de correção.</p>
+    </div>
+  </div>
+</details>
+
+<nav class="trilha" id="trilha" aria-label="Caminho percorrido"></nav>
+<main id="palco"></main>
+
+<footer>Nunca se identifique na prova — use apenas "Advogado..." e "OAB..."</footer>
+</div>
+
+<script>
+const P = (nome, fundamento, prazo, prazoNota, enderec, pedidos, dica, modelo) =>
+  ({tipo:'peca', nome, fundamento, prazo, prazoNota, enderec, pedidos, dica, modelo});
+
+const FECHO = `Nesses termos,
+pede deferimento.
+
+Local..., data...
+
+ADVOGADO...
+OAB... nº ...`;
+
+const arvore = {
+  pergunta: "O que aconteceu com o cliente?",
+  filhos: [
+  {
+    ico:"🚔", titulo:"Foi preso",
+    desc:"Flagrante, preventiva ou ameaça de prisão",
+    pergunta:"Como foi a prisão?",
+    filhos:[
+      { ico:"⛓️", titulo:"Flagrante irregular",
+        desc:"Sem nota de culpa, fora das hipóteses do art. 302, excesso de prazo, tortura",
+        peca: P("Relaxamento de Prisão",
+          "Art. 5º, LXV, CF + art. 310, I, CPP",
+          "—","não há prazo próprio: peticiona-se de imediato",
+          "Juiz competente para a custódia (ou Juiz das Garantias, onde implantado).",
+          ["Demonstrar a ilegalidade formal da prisão (vício de origem)",
+           "Requerer o relaxamento imediato da prisão em flagrante",
+           "Subsidiariamente: liberdade provisória, com ou sem fiança (art. 321)",
+           "Subsidiariamente: cautelares diversas do art. 319 CPP"],
+          "A palavra-chave do enunciado é <b>ilegalidade</b>. Se a prisão nasceu viciada (formalidade descumprida, flagrante forjado, prazo estourado), é relaxamento — não confunda com liberdade provisória, que pressupõe prisão LEGAL.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., nacionalidade..., estado civil..., profissão..., portador do RG nº ... e do CPF nº ..., residente e domiciliado na ..., atualmente recolhido na ..., vem, por seu advogado que esta subscreve (procuração anexa), com fundamento no art. 5º, LXV, da Constituição Federal e no art. 310, I, do Código de Processo Penal, requerer o
+
+RELAXAMENTO DA PRISÃO EM FLAGRANTE
+
+pelos fatos e fundamentos a seguir expostos.
+
+I – DOS FATOS
+(Narrar objetivamente: quando, onde e como ocorreu a prisão, apontando o vício.)
+
+II – DO DIREITO
+A prisão é manifestamente ILEGAL, pois... (ex.: não foi entregue a nota de culpa no prazo de 24h — art. 306, §2º, CPP; a situação não se amolda a nenhuma hipótese de flagrante do art. 302 CPP; excesso de prazo na comunicação ao juiz — art. 306, caput).
+Nos termos do art. 5º, LXV, da CF, "a prisão ilegal será imediatamente relaxada pela autoridade judiciária".
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) o RELAXAMENTO da prisão em flagrante, com a expedição do competente alvará de soltura;
+b) subsidiariamente, a concessão de LIBERDADE PROVISÓRIA, com ou sem fiança (arts. 310, III, e 321, CPP);
+c) subsidiariamente, a aplicação de medidas cautelares diversas da prisão (art. 319, CPP).
+
+${FECHO}`)
+      },
+      { ico:"🕊️", titulo:"Flagrante regular, mas prisão desnecessária",
+        desc:"Primário, bons antecedentes, residência fixa, crime sem violência",
+        peca: P("Pedido de Liberdade Provisória",
+          "Arts. 310, III, e 321 CPP",
+          "—","peticiona-se de imediato, antes ou na audiência de custódia",
+          "Juiz competente para a custódia / Juiz das Garantias.",
+          ["Demonstrar ausência dos requisitos da preventiva (art. 312 CPP)",
+           "Requerer liberdade provisória, com ou sem fiança",
+           "Subsidiariamente: medidas cautelares do art. 319 CPP",
+           "Se for o caso: hipossuficiência para dispensa/redução da fiança (art. 325, §1º)"],
+          "Aqui a prisão é <b>legal, porém desnecessária</b>. O enunciado carrega nas condições pessoais favoráveis: primariedade, emprego, residência fixa. Esse é o gatilho da FGV.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., (qualificação completa), atualmente recolhido na ..., vem, por seu advogado (procuração anexa), com fundamento nos arts. 310, III, e 321 do Código de Processo Penal, requerer a concessão de
+
+LIBERDADE PROVISÓRIA
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Narrar a prisão e destacar as condições pessoais favoráveis.)
+
+II – DO DIREITO
+Ausentes os requisitos da prisão preventiva (art. 312 CPP): não há risco à ordem pública, à instrução ou à aplicação da lei penal. O requerente é primário, possui bons antecedentes, residência fixa e ocupação lícita.
+A prisão cautelar é medida excepcional (art. 282, §6º, CPP), somente admissível quando insuficientes as cautelares diversas.
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) a concessão de LIBERDADE PROVISÓRIA, sem fiança (ou com fiança, conforme o caso), com expedição de alvará de soltura;
+b) subsidiariamente, a aplicação de medidas cautelares diversas da prisão (art. 319 CPP);
+c) sendo o caso, a dispensa ou redução da fiança, ante a hipossuficiência do requerente (art. 325, §1º, CPP).
+
+${FECHO}`)
+      },
+      { ico:"📜", titulo:"Preventiva sem fundamento (ou motivos cessaram)",
+        desc:"Decretação genérica, sem contemporaneidade, ou a situação mudou",
+        peca: P("Revogação da Prisão Preventiva",
+          "Art. 316 CPP",
+          "—","a qualquer tempo, enquanto durar a prisão",
+          "Juiz ou Tribunal que decretou a preventiva.",
+          ["Demonstrar ausência (ou desaparecimento) dos requisitos do art. 312",
+           "Atacar fundamentação genérica/sem contemporaneidade (art. 315)",
+           "Requerer a revogação da preventiva",
+           "Subsidiariamente: substituição por cautelares do art. 319 ou prisão domiciliar (arts. 317-318)"],
+          "Se o enunciado citar <b>gestante, mãe de criança pequena ou responsável por pessoa com deficiência</b>, inclua o pedido de prisão domiciliar do art. 318 — é item de espelho clássico.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., (qualificação completa), já qualificado nos autos em epígrafe, vem, por seu advogado, com fundamento no art. 316 do Código de Processo Penal, requerer a
+
+REVOGAÇÃO DA PRISÃO PREVENTIVA
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Narrar a decretação da preventiva e a mudança do quadro fático, ou a fragilidade da decisão.)
+
+II – DO DIREITO
+Não subsistem (ou jamais existiram) os requisitos do art. 312 do CPP. A decisão que decretou a custódia carece de fundamentação concreta e contemporânea, em afronta ao art. 315 do CPP e ao art. 93, IX, da CF.
+(Se aplicável: o requerente é mãe de criança de até 12 anos / gestante — art. 318, III e V, CPP.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) a REVOGAÇÃO da prisão preventiva, com expedição de alvará de soltura;
+b) subsidiariamente, a substituição por medidas cautelares diversas (art. 319 CPP);
+c) subsidiariamente, a substituição por PRISÃO DOMICILIAR (arts. 317 e 318 CPP).
+
+${FECHO}`)
+      },
+      { ico:"🆘", titulo:"Constrangimento ilegal à liberdade",
+        desc:"Delegado nega fiança, juiz indefere pedido sem recurso cabível, ameaça concreta de prisão",
+        peca: P("Habeas Corpus",
+          "Art. 5º, LXVIII, CF + arts. 647 e ss. CPP",
+          "—","impetrável a qualquer tempo; não exige advogado",
+          "Depende da autoridade coatora: delegado → juiz de 1º grau; juiz → TJ/TRF; Tribunal → STJ; STJ → STF.",
+          ["Qualificar paciente, impetrante e autoridade coatora",
+           "Demonstrar o constrangimento ilegal (art. 648 CPP)",
+           "Pedir liminar (fumus boni iuris + periculum in mora)",
+           "No mérito: concessão da ordem para cessar a coação"],
+          "O HC é o <b>coringa</b>: cabe em qualquer fase quando a liberdade de locomoção está em jogo e não há recurso próprio/eficaz. Cuidado com o endereçamento — errar a autoridade coatora derruba pontos preciosos.",
+`EXCELENTÍSSIMO SENHOR DOUTOR DESEMBARGADOR PRESIDENTE DO EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+(adaptar conforme a autoridade coatora)
+
+
+
+ADVOGADO..., inscrito na OAB... sob o nº ..., com escritório na ..., vem, com fundamento no art. 5º, LXVIII, da Constituição Federal e nos arts. 647 e seguintes do Código de Processo Penal, impetrar
+
+ORDEM DE HABEAS CORPUS
+(com pedido de liminar)
+
+em favor de FULANO... (qualificação completa), PACIENTE, apontando como autoridade coatora o MM. JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ..., pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Narrar objetivamente o ato coator.)
+
+II – DO DIREITO
+O paciente sofre constrangimento ilegal, nos termos do art. 648, ..., do CPP, pois... (ex.: não há justa causa; a prisão perdura além do prazo legal; a ordem emanou de autoridade incompetente).
+
+III – DA LIMINAR
+Presentes o fumus boni iuris (evidente ilegalidade demonstrada) e o periculum in mora (o paciente encontra-se preso / na iminência de prisão), impõe-se a concessão liminar da ordem.
+
+IV – DOS PEDIDOS
+Ante o exposto, requer:
+a) LIMINARMENTE, a expedição de alvará de soltura / salvo-conduto em favor do paciente;
+b) a notificação da autoridade coatora para prestar informações;
+c) a oitiva do Ministério Público;
+d) no mérito, a CONCESSÃO DEFINITIVA DA ORDEM, para... (cessar a coação, trancar a ação penal, etc.).
+
+${FECHO}`)
+      }
+    ]
+  },
+  {
+    ico:"📄", titulo:"Foi denunciado",
+    desc:"Recebeu a citação para se defender",
+    pergunta:"Qual o rito do processo?",
+    filhos:[
+      { ico:"⚖️", titulo:"Rito comum (ordinário ou sumário)",
+        desc:"Citado para responder em 10 dias",
+        peca: P("Resposta à Acusação",
+          "Art. 396-A CPP",
+          "10 dias","contados da citação",
+          "Juiz da vara criminal em que tramita o processo.",
+          ["Preliminares: inépcia da denúncia, nulidades, incompetência",
+           "Mérito: teses de absolvição sumária (art. 397)",
+           "Arrolar testemunhas (8 no ordinário, 5 no sumário) — SEMPRE",
+           "Requerer provas e juntar documentos"],
+          "Nunca esqueça de <b>arrolar testemunhas</b> — é o item de espelho que mais derruba candidato nessa peça. E o pedido principal é a absolvição sumária do art. 397.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., já qualificado nos autos da ação penal em epígrafe, que lhe move o Ministério Público, vem, por seu advogado (procuração anexa), com fundamento no art. 396-A do Código de Processo Penal, apresentar
+
+RESPOSTA À ACUSAÇÃO
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Síntese da acusação e da versão defensiva.)
+
+II – PRELIMINARMENTE
+(Se houver: inépcia da denúncia — art. 41 c/c art. 395, I, CPP; nulidade de citação; incompetência do juízo; ilicitude de prova — art. 5º, LVI, CF e art. 157 CPP.)
+
+III – DO MÉRITO – DA ABSOLVIÇÃO SUMÁRIA
+Impõe-se a absolvição sumária, nos termos do art. 397, ..., do CPP, pois... (I – excludente de ilicitude; II – excludente de culpabilidade; III – fato atípico; IV – extinção da punibilidade).
+
+IV – DOS PEDIDOS
+Ante o exposto, requer:
+a) o acolhimento das preliminares, com a rejeição da denúncia / anulação do feito;
+b) no mérito, a ABSOLVIÇÃO SUMÁRIA do acusado (art. 397, ..., CPP);
+c) subsidiariamente, a produção de todas as provas admitidas, em especial a oitiva das testemunhas abaixo arroladas e o interrogatório do réu.
+
+ROL DE TESTEMUNHAS:
+1. Nome..., qualificação..., endereço...;
+2. Nome..., qualificação..., endereço...
+
+${FECHO}`)
+      },
+      { ico:"🏛️", titulo:"Funcionário público — crime funcional",
+        desc:"Notificado ANTES do recebimento da denúncia",
+        peca: P("Defesa Preliminar (crimes funcionais)",
+          "Art. 514 CPP",
+          "15 dias","contados da notificação",
+          "Juiz da vara criminal competente.",
+          ["Demonstrar a improcedência da acusação",
+           "Requerer a rejeição da denúncia (art. 395 CPP)",
+           "Atacar a justa causa e a inépcia da inicial"],
+          "O marco temporal é tudo: se a denúncia <b>ainda não foi recebida</b> e o réu é funcionário público em crime funcional afiançável, é defesa preliminar do 514 — não resposta à acusação.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., (qualificação completa), funcionário público, notificado nos termos do art. 514 do CPP, vem, por seu advogado (procuração anexa), apresentar
+
+DEFESA PRELIMINAR
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Síntese da imputação e do contexto funcional.)
+
+II – DO DIREITO
+A denúncia deve ser rejeitada, nos termos do art. 395 do CPP, pois... (falta de justa causa; inépcia da inicial; atipicidade da conduta; ausência de dolo).
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) a REJEIÇÃO DA DENÚNCIA (art. 395, ..., CPP);
+b) subsidiariamente, caso recebida, que se proceda à regular citação para resposta à acusação, reservando-se a defesa a arrolar testemunhas no momento oportuno.
+
+${FECHO}`)
+      },
+      { ico:"💊", titulo:"Lei de Drogas",
+        desc:"Notificado ANTES do recebimento da denúncia (art. 55)",
+        peca: P("Defesa Preliminar (Lei de Drogas)",
+          "Art. 55 da Lei 11.343/2006",
+          "10 dias","contados da notificação",
+          "Juiz da vara criminal competente.",
+          ["Arguir preliminares e justificações",
+           "Requerer a rejeição da denúncia",
+           "Arrolar testemunhas (até 5) e requerer provas",
+           "Teses típicas: uso próprio (art. 28), tráfico privilegiado (art. 33, §4º), nulidade de busca domiciliar"],
+          "Mesma lógica do 514: o divisor de águas é o <b>recebimento da denúncia</b>. Depois de recebida e feita a citação, a peça vira resposta à acusação.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., (qualificação completa), notificado nos termos do art. 55 da Lei nº 11.343/2006, vem, por seu advogado (procuração anexa), apresentar
+
+DEFESA PRELIMINAR
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Síntese da imputação: quantidade da droga, circunstâncias da apreensão.)
+
+II – DO DIREITO
+(Teses conforme o caso: desclassificação para uso próprio — art. 28 da Lei 11.343/06, considerando quantidade, local e condições pessoais — art. 28, §2º; nulidade da busca domiciliar sem fundadas razões — art. 5º, XI, CF; falta de justa causa.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) a REJEIÇÃO DA DENÚNCIA (art. 395 CPP);
+b) subsidiariamente, a desclassificação da imputação para o art. 28 da Lei 11.343/06;
+c) a produção de todas as provas em direito admitidas, em especial a oitiva das testemunhas abaixo arroladas.
+
+ROL DE TESTEMUNHAS:
+1. Nome..., endereço...;
+2. Nome..., endereço...
+
+${FECHO}`)
+      }
+    ]
+  },
+  {
+    ico:"⚖️", titulo:"Processo em andamento",
+    desc:"Instrução encerrada ou decisão interlocutória no meio do caminho",
+    pergunta:"Em que pé está o processo?",
+    filhos:[
+      { ico:"✍️", titulo:"Instrução encerrada — debates convertidos em memoriais",
+        desc:"Juiz determinou apresentação de alegações finais escritas",
+        peca: P("Memoriais (Alegações Finais Escritas)",
+          "Art. 403, §3º, CPP",
+          "5 dias","contados da intimação",
+          "Juiz da vara criminal em que tramita o processo.",
+          ["Preliminares: nulidades da instrução",
+           "Mérito: absolvição com base no art. 386 CPP (indicar o inciso!)",
+           "Teses subsidiárias em cascata: desclassificação, minorantes, atenuantes, regime, substituição (art. 44 CP), sursis",
+           "Pedido final: absolvição; subsidiariamente, dosimetria favorável"],
+          "Memoriais são a peça das <b>teses em cascata</b>: a FGV pontua cada tese subsidiária separadamente. Nunca peça só a absolvição — desça degrau por degrau até o regime e a substituição da pena.",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+
+
+Autos nº ...
+
+FULANO..., já qualificado nos autos da ação penal em epígrafe, vem, por seu advogado, com fundamento no art. 403, §3º, do Código de Processo Penal, apresentar
+
+MEMORIAIS
+
+pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Síntese da acusação e do que a instrução efetivamente comprovou.)
+
+II – PRELIMINARMENTE
+(Se houver: nulidades da instrução — cerceamento de defesa, prova ilícita etc.)
+
+III – DO MÉRITO
+III.1 – DA ABSOLVIÇÃO: impõe-se a absolvição do acusado, nos termos do art. 386, ..., do CPP, pois... (II – não haver prova da existência do fato; III – atipicidade; V – não existir prova de autoria; VI – excludente; VII – insuficiência de provas).
+
+III.2 – SUBSIDIARIAMENTE (teses em cascata, conforme o caso):
+a) desclassificação para... (crime menos grave);
+b) reconhecimento de causa de diminuição (ex.: tentativa — art. 14, II e § único, CP; privilégio);
+c) reconhecimento de atenuantes (ex.: confissão — art. 65, III, d, CP);
+d) fixação da pena-base no mínimo legal (art. 59 CP);
+e) regime inicial mais brando (art. 33 CP);
+f) substituição por penas restritivas de direitos (art. 44 CP) ou sursis (art. 77 CP);
+g) direito de recorrer em liberdade.
+
+IV – DOS PEDIDOS
+Ante o exposto, requer a ABSOLVIÇÃO do acusado (art. 386, ..., CPP); subsidiariamente, o acolhimento das teses do item III.2.
+
+${FECHO}`)
+      },
+      { ico:"📌", titulo:"Decisão interlocutória do rol do art. 581",
+        desc:"Rejeição da denúncia (querelante), quebra de fiança, extinção da punibilidade...",
+        peca: P("Recurso em Sentido Estrito (RESE)",
+          "Art. 581 CPP",
+          "5 dias","interposição (+ 2 dias para razões, art. 588)",
+          "Interposição ao juiz a quo; razões dirigidas ao Tribunal (TJ/TRF).",
+          ["Hipótese deve estar no rol TAXATIVO do art. 581",
+           "Peça de interposição + razões recursais em folhas separadas",
+           "Requerer juízo de retratação (art. 589)",
+           "No mérito: reforma da decisão atacada"],
+          "O rol do 581 é <b>taxativo</b> — se a decisão não está lá (e não é sentença), o caminho costuma ser HC. Estruture SEMPRE em duas partes: interposição e razões.",
+`━━━ 1ª PARTE: INTERPOSIÇÃO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+Autos nº ...
+
+FULANO..., já qualificado nos autos, vem, por seu advogado, inconformado com a r. decisão de fls. ..., interpor
+
+RECURSO EM SENTIDO ESTRITO
+
+com fundamento no art. 581, ..., do CPP, requerendo o recebimento e processamento do recurso, o exercício do juízo de retratação (art. 589 CPP) e, mantida a decisão, a remessa ao Egrégio Tribunal de Justiça, com as inclusas razões.
+
+${FECHO}
+
+━━━ 2ª PARTE: RAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+RAZÕES DE RECURSO EM SENTIDO ESTRITO
+Recorrente: FULANO...
+Recorrido: Ministério Público (ou querelado)
+
+I – DOS FATOS
+(Síntese da decisão atacada.)
+
+II – DO DIREITO
+(Demonstrar o desacerto da decisão, com fundamento legal.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO do recurso, para reformar a r. decisão e... (pedido específico).
+
+${FECHO}`)
+      }
+    ]
+  },
+  {
+    ico:"🔨", titulo:"Foi condenado ou pronunciado",
+    desc:"Sentença, pronúncia, acórdão ou trânsito em julgado",
+    pergunta:"Qual decisão saiu?",
+    filhos:[
+      { ico:"📕", titulo:"Sentença condenatória do juiz singular",
+        desc:"Dosimetria errada, absolvição possível, regime incorreto",
+        peca: P("Apelação",
+          "Art. 593, I, CPP",
+          "5 dias","interposição (+ 8 dias para razões, art. 600)",
+          "Interposição ao juízo a quo; razões ao Tribunal (TJ/TRF).",
+          ["Interposição + razões em peças separadas",
+           "Preliminares: nulidades (art. 564)",
+           "Mérito: absolvição (art. 386, indicando o inciso)",
+           "Subsidiárias: pena-base, atenuantes/minorantes, regime, substituição (art. 44 CP), sursis"],
+          "É a peça <b>mais cobrada da história</b> da 2ª fase penal. Domine a estrutura em duas partes e a cascata de teses de dosimetria (critério trifásico do art. 68 CP).",
+`━━━ 1ª PARTE: INTERPOSIÇÃO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+Autos nº ...
+
+FULANO..., já qualificado nos autos, vem, por seu advogado, inconformado com a r. sentença de fls. ..., interpor
+
+RECURSO DE APELAÇÃO
+
+com fundamento no art. 593, I, do CPP, requerendo seu recebimento e a remessa ao Egrégio Tribunal de Justiça, com as inclusas razões (art. 600 CPP).
+
+${FECHO}
+
+━━━ 2ª PARTE: RAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+RAZÕES DE APELAÇÃO
+Apelante: FULANO...
+Apelado: Ministério Público
+Autos nº ...
+
+I – DOS FATOS
+(Síntese da condenação: crime, pena aplicada, regime.)
+
+II – PRELIMINARMENTE
+(Se houver: nulidades — art. 564 CPP; cerceamento de defesa; prova ilícita.)
+
+III – DO MÉRITO
+III.1 – DA ABSOLVIÇÃO: nos termos do art. 386, ..., do CPP, pois...
+
+III.2 – SUBSIDIARIAMENTE – DA DOSIMETRIA:
+a) redução da pena-base ao mínimo (art. 59 CP — circunstâncias valoradas indevidamente);
+b) reconhecimento da atenuante de... (art. 65 CP);
+c) aplicação da causa de diminuição de... ;
+d) fixação de regime inicial mais brando (art. 33, §2º e §3º, CP + Súmulas 718/719 STF);
+e) substituição da pena por restritivas de direitos (art. 44 CP);
+f) suspensão condicional da pena (art. 77 CP);
+g) direito de recorrer em liberdade.
+
+IV – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO do recurso para ABSOLVER o apelante; subsidiariamente, o acolhimento das teses de dosimetria do item III.2.
+
+${FECHO}`)
+      },
+      { ico:"👥", titulo:"Foi pronunciado (Tribunal do Júri)",
+        desc:"Juiz mandou o réu a julgamento pelo júri",
+        peca: P("RESE contra a Pronúncia",
+          "Art. 581, IV, CPP",
+          "5 dias","interposição (+ 2 dias para razões)",
+          "Interposição ao juiz a quo; razões ao Tribunal.",
+          ["Impronúncia (art. 414)","Absolvição sumária (art. 415)","Desclassificação (art. 419)","Exclusão de qualificadoras improcedentes","Revogação da preventiva, se decretada"],
+          "Contra pronúncia NÃO cabe apelação — é RESE. A FGV adora essa pegadinha. E o pedido de <b>exclusão de qualificadora</b> é item de espelho recorrente.",
+`━━━ 1ª PARTE: INTERPOSIÇÃO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA VARA DO TRIBUNAL DO JÚRI DA COMARCA DE ...
+
+Autos nº ...
+
+FULANO..., já qualificado, vem, por seu advogado, inconformado com a r. decisão de pronúncia de fls. ..., interpor
+
+RECURSO EM SENTIDO ESTRITO
+
+com fundamento no art. 581, IV, do CPP, requerendo o recebimento, o juízo de retratação (art. 589) e a remessa ao Tribunal com as inclusas razões.
+
+${FECHO}
+
+━━━ 2ª PARTE: RAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+RAZÕES DE RECURSO EM SENTIDO ESTRITO
+Recorrente: FULANO...
+Recorrido: Ministério Público
+
+I – DOS FATOS
+(Síntese da imputação e da pronúncia.)
+
+II – DO DIREITO (teses conforme o caso)
+a) DA IMPRONÚNCIA (art. 414 CPP): ausência de indícios suficientes de autoria / prova da materialidade;
+b) DA ABSOLVIÇÃO SUMÁRIA (art. 415 CPP): comprovada excludente de ilicitude...;
+c) DA DESCLASSIFICAÇÃO (art. 419 CPP): ausência de dolo de matar (animus necandi);
+d) DA EXCLUSÃO DA QUALIFICADORA: manifestamente improcedente, pois...
+
+III – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO do recurso para... (impronunciar / absolver sumariamente / desclassificar / excluir a qualificadora); subsidiariamente, a revogação da prisão preventiva.
+
+${FECHO}`)
+      },
+      { ico:"🗳️", titulo:"Condenado PELO JÚRI",
+        desc:"Veredito contrário à prova, erro na pena ou nulidade da sessão",
+        peca: P("Apelação (decisões do Júri)",
+          "Art. 593, III, CPP",
+          "5 dias","interposição (+ 8 dias para razões)",
+          "Interposição ao juiz-presidente do Júri; razões ao Tribunal.",
+          ["FUNDAMENTAÇÃO VINCULADA: indicar a alínea (a, b, c ou d)",
+           "a) nulidade posterior à pronúncia · b) sentença contrária à lei · c) erro na pena · d) decisão contrária à prova",
+           "Na alínea d: pedir novo julgamento (soberania dos vereditos)"],
+          "Apelação do júri é <b>vinculada</b>: sem indicar a alínea correta, a peça desaba. Na alínea “d”, o Tribunal não absolve — apenas submete o réu a novo júri (uma única vez).",
+`━━━ 1ª PARTE: INTERPOSIÇÃO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ PRESIDENTE DO TRIBUNAL DO JÚRI DA COMARCA DE ...
+
+Autos nº ...
+
+FULANO..., já qualificado, vem, por seu advogado, inconformado com a r. sentença condenatória proferida pelo Tribunal do Júri, interpor
+
+RECURSO DE APELAÇÃO
+
+com fundamento no art. 593, III, alínea(s) ..., do CPP, requerendo seu recebimento e remessa ao Tribunal com as inclusas razões.
+
+${FECHO}
+
+━━━ 2ª PARTE: RAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+RAZÕES DE APELAÇÃO
+Apelante: FULANO...
+Apelado: Ministério Público
+
+I – DOS FATOS
+(Síntese do julgamento e do veredito.)
+
+II – DO DIREITO (indicar a alínea!)
+a) art. 593, III, “a”: nulidade posterior à pronúncia (ex.: quesitação viciada, jurado impedido);
+b) art. 593, III, “b”: sentença do juiz-presidente contrária à lei ou à decisão dos jurados;
+c) art. 593, III, “c”: erro ou injustiça na aplicação da pena (dosimetria);
+d) art. 593, III, “d”: decisão dos jurados manifestamente contrária à prova dos autos.
+
+III – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO do recurso para:
+— alínea “d”: submeter o apelante a NOVO JULGAMENTO pelo Tribunal do Júri;
+— alíneas “b”/“c”: retificar a sentença / redimensionar a pena;
+— alínea “a”: anular o julgamento.
+
+${FECHO}`)
+      },
+      { ico:"🛡️", titulo:"O MP apelou da sentença",
+        desc:"Réu absolvido (ou MP quer aumentar a pena) e você foi intimado para responder ao recurso",
+        peca: P("Contrarrazões à Apelação",
+          "Art. 600 CPP",
+          "8 dias","contados da intimação para contrarrazoar",
+          "Petição de encaminhamento ao juízo a quo; contrarrazões dirigidas ao Tribunal (TJ/TRF).",
+          ["Estrutura espelhada da apelação: encaminhamento + contrarrazões separadas",
+           "Preliminar de NÃO CONHECIMENTO: intempestividade, ausência de interesse recursal, irregularidade",
+           "Mérito: rebater ponto a ponto as razões do MP",
+           "Defender a manutenção integral da sentença (absolutória ou da dosimetria fixada)"],
+          "Foi a peça do <b>43º Exame</b> — a FGV inovou dentro da família da apelação. Aqui você joga na defesa da sentença: o objetivo é o desprovimento do recurso do MP, e a preliminar de não conhecimento é item de espelho quando o enunciado der pista de intempestividade.",
+`━━━ 1ª PARTE: PETIÇÃO DE ENCAMINHAMENTO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA ... VARA CRIMINAL DA COMARCA DE ...
+
+Autos nº ...
+
+FULANO..., já qualificado nos autos, vem, por seu advogado, tempestivamente, com fundamento no art. 600 do CPP, apresentar suas CONTRARRAZÕES ao recurso de apelação interposto pelo Ministério Público, requerendo sua juntada e a posterior remessa ao Egrégio Tribunal de Justiça.
+
+${FECHO}
+
+━━━ 2ª PARTE: CONTRARRAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+CONTRARRAZÕES DE APELAÇÃO
+Apelante: Ministério Público
+Apelado: FULANO...
+Autos nº ...
+
+I – DOS FATOS
+(Síntese da sentença recorrida e das razões do MP.)
+
+II – PRELIMINARMENTE – DO NÃO CONHECIMENTO
+(Se houver: intempestividade do recurso — art. 593, caput, CPP; ausência de interesse recursal; falta de regularidade formal.)
+
+III – DO MÉRITO
+(Rebater ponto a ponto as razões ministeriais, demonstrando o acerto da r. sentença: manutenção da absolvição — art. 386, ..., CPP — ou da pena/regime fixados.)
+
+IV – DOS PEDIDOS
+Ante o exposto, requer:
+a) preliminarmente, o NÃO CONHECIMENTO do recurso;
+b) no mérito, seu total DESPROVIMENTO, mantendo-se integralmente a r. sentença recorrida.
+
+${FECHO}`)
+      },
+      { ico:"⚡", titulo:"Acórdão NÃO UNÂNIME desfavorável (2×1)",
+        desc:"Tribunal julgou apelação ou RESE contra o réu por maioria",
+        peca: P("Embargos Infringentes e de Nulidade",
+          "Art. 609, parágrafo único, CPP",
+          "10 dias","da publicação do acórdão",
+          "Ao próprio Tribunal que proferiu o acórdão (relator).",
+          ["Decisão de 2ª instância NÃO unânime e DESFAVORÁVEL ao réu",
+           "Limitado à matéria da divergência (voto vencido)",
+           "Infringentes = mérito · de nulidade = matéria processual",
+           "Pedido: prevalência do voto vencido"],
+          "Exclusivo da <b>defesa</b> e restrito ao ponto da divergência. Se o voto vencido só divergiu quanto ao regime, os embargos só podem discutir o regime.",
+`EXCELENTÍSSIMO SENHOR DOUTOR DESEMBARGADOR RELATOR DA ... CÂMARA CRIMINAL DO EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+
+
+
+Apelação Criminal nº ...
+
+FULANO..., já qualificado nos autos, vem, por seu advogado, inconformado com o v. acórdão NÃO UNÂNIME de fls. ..., opor
+
+EMBARGOS INFRINGENTES E DE NULIDADE
+
+com fundamento no art. 609, parágrafo único, do CPP, pelos fundamentos a seguir.
+
+I – DO CABIMENTO
+O v. acórdão, por maioria de votos (2×1), foi desfavorável ao embargante, tendo o voto vencido do eminente Desembargador ... divergido quanto a... — matéria à qual se restringem os presentes embargos.
+
+II – DAS RAZÕES DO VOTO VENCIDO
+(Desenvolver a tese do voto vencido, demonstrando seu acerto.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO dos embargos, para que prevaleça o voto vencido, ... (absolvendo o embargante / reduzindo a pena / reconhecendo a nulidade).
+
+${FECHO}`)
+      },
+      { ico:"🔁", titulo:"Trânsito em julgado + prova nova ou erro",
+        desc:"Condenação definitiva contrária à lei, à evidência, ou surgiu prova de inocência",
+        peca: P("Revisão Criminal",
+          "Art. 621 CPP",
+          "sem prazo","a qualquer tempo, inclusive após extinção da pena",
+          "Tribunal competente (TJ/TRF — ou STJ/STF se condenação originária).",
+          ["Hipóteses taxativas do art. 621 (I a III)",
+           "Ação exclusiva PRO REO",
+           "Pedidos: absolvição, anulação, redução da pena ou desclassificação",
+           "Se cabível: indenização por erro judiciário (art. 630)"],
+          "Não é recurso: é <b>ação autônoma de impugnação</b>. Pressupõe trânsito em julgado — se ainda cabe recurso, a revisão é incabível.",
+`EXCELENTÍSSIMO SENHOR DOUTOR DESEMBARGADOR PRESIDENTE DO EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+
+
+
+FULANO..., (qualificação completa), condenado nos autos da ação penal nº ..., com trânsito em julgado em ..., vem, por seu advogado (procuração anexa), com fundamento nos arts. 621, ..., e 623 do Código de Processo Penal, ajuizar
+
+REVISÃO CRIMINAL
+
+em face da r. sentença condenatória proferida pelo Juízo da ... Vara Criminal da Comarca de ..., pelos fatos e fundamentos a seguir.
+
+I – DOS FATOS
+(Síntese da condenação e do trânsito em julgado.)
+
+II – DO CABIMENTO E DO MÉRITO
+A hipótese amolda-se ao art. 621, ..., do CPP:
+I – sentença contrária ao texto expresso da lei penal ou à evidência dos autos;
+II – sentença fundada em provas comprovadamente falsas;
+III – descoberta de novas provas de inocência ou de circunstância que autorize diminuição da pena.
+(Desenvolver a tese aplicável.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer a PROCEDÊNCIA da revisão criminal para:
+a) absolver o requerente (art. 626 CPP);
+b) subsidiariamente, anular o processo / reduzir a pena / desclassificar a infração;
+c) reconhecer o direito à justa indenização pelo erro judiciário (art. 630 CPP).
+
+${FECHO}`)
+      }
+    ]
+  },
+  {
+    ico:"🔒", titulo:"Já está cumprindo pena",
+    desc:"Questões da execução penal",
+    pergunta:"O que houve na execução?",
+    filhos:[
+      { ico:"📉", titulo:"Juiz da execução negou um direito",
+        desc:"Progressão, livramento, remição, saída temporária — ou reconheceu falta grave",
+        peca: P("Agravo em Execução",
+          "Art. 197 LEP",
+          "5 dias","Súmula 700 do STF (+ 2 dias para razões, rito do RESE)",
+          "Interposição ao juízo da execução; razões ao Tribunal.",
+          ["Segue o rito do RESE: interposição + razões separadas",
+           "Atacar a decisão do juiz da execução (art. 112 LEP etc.)",
+           "Teses comuns: remição, detração (art. 42 CP), prescrição da falta grave",
+           "Regra geral: SEM efeito suspensivo"],
+          "Grave a <b>Súmula 700 do STF</b>: prazo de 5 dias. E lembre que TODA decisão do juiz da execução desafia agravo (art. 197) — cabimento amplo, diferente do rol taxativo do RESE.",
+`━━━ 1ª PARTE: INTERPOSIÇÃO ━━━
+
+EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA VARA DE EXECUÇÕES PENAIS DA COMARCA DE ...
+
+Autos de Execução Penal nº ...
+
+FULANO..., já qualificado nos autos, vem, por seu advogado, inconformado com a r. decisão de fls. ..., interpor
+
+AGRAVO EM EXECUÇÃO
+
+com fundamento no art. 197 da Lei de Execução Penal, requerendo o recebimento, o juízo de retratação e a remessa ao Tribunal com as inclusas razões.
+
+${FECHO}
+
+━━━ 2ª PARTE: RAZÕES ━━━
+
+EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+COLENDA CÂMARA CRIMINAL
+
+RAZÕES DE AGRAVO EM EXECUÇÃO
+Agravante: FULANO...
+Agravado: Ministério Público
+
+I – DOS FATOS
+(Síntese da decisão do juízo da execução.)
+
+II – DO DIREITO
+(Ex.: preenchidos os requisitos objetivo e subjetivo da progressão — art. 112 LEP; direito à remição por trabalho/estudo — art. 126 LEP; detração — art. 42 CP; nulidade do reconhecimento da falta grave sem PAD/defesa técnica.)
+
+III – DOS PEDIDOS
+Ante o exposto, requer o CONHECIMENTO e PROVIMENTO do agravo, para reformar a r. decisão e... (conceder a progressão / a remição / afastar a falta grave).
+
+${FECHO}`)
+      },
+      { ico:"🆘", titulo:"Constrangimento ilegal na execução",
+        desc:"Mantido em regime mais gravoso por falta de vaga, excesso de execução",
+        peca: P("Habeas Corpus (execução)",
+          "Art. 647 CPP + Súmula Vinculante 56",
+          "—","a qualquer tempo",
+          "Tribunal competente conforme a autoridade coatora (juiz da execução → TJ/TRF).",
+          ["Demonstrar o constrangimento ilegal atual",
+           "SV 56: falta de vaga não autoriza regime mais gravoso",
+           "Pedir liminar + concessão da ordem"],
+          "Se o enunciado disser que o apenado progrediu mas <b>continua no fechado por falta de vaga</b>, a resposta é a Súmula Vinculante 56 — via HC ou agravo, conforme o comando da questão.",
+`EXCELENTÍSSIMO SENHOR DOUTOR DESEMBARGADOR PRESIDENTE DO EGRÉGIO TRIBUNAL DE JUSTIÇA DO ESTADO DE ...
+
+
+
+ADVOGADO..., inscrito na OAB... nº ..., vem, com fundamento no art. 5º, LXVIII, da CF e arts. 647 e ss. do CPP, impetrar
+
+ORDEM DE HABEAS CORPUS
+(com pedido de liminar)
+
+em favor de FULANO... (qualificação), PACIENTE, apontando como autoridade coatora o MM. JUIZ DE DIREITO DA VARA DE EXECUÇÕES PENAIS DA COMARCA DE ...
+
+I – DOS FATOS
+(Ex.: o paciente obteve progressão ao regime semiaberto, mas permanece no fechado por falta de vaga.)
+
+II – DO DIREITO
+Constrangimento ilegal evidente (art. 648, I, CPP). Nos termos da Súmula Vinculante 56, a falta de estabelecimento adequado não autoriza a manutenção em regime mais gravoso, devendo-se observar os parâmetros do RE 641.320/RS (saída antecipada, monitoramento, prisão domiciliar).
+
+III – DOS PEDIDOS
+a) LIMINARMENTE, a transferência ao regime adequado ou, na falta de vaga, prisão domiciliar / monitoramento eletrônico;
+b) informações da autoridade coatora e oitiva do MP;
+c) no mérito, a CONCESSÃO DEFINITIVA DA ORDEM.
+
+${FECHO}`)
+      }
+    ]
+  },
+  {
+    ico:"😤", titulo:"Foi vítima de um crime",
+    desc:"Quer processar o autor do fato",
+    pergunta:"Qual a natureza da ação penal?",
+    filhos:[
+      { ico:"🖋️", titulo:"Ação penal PRIVADA",
+        desc:"Calúnia, difamação, injúria, dano simples...",
+        peca: P("Queixa-Crime",
+          "Arts. 41 e 44 CPP",
+          "6 meses","prazo DECADENCIAL, do conhecimento da autoria (art. 38)",
+          "Juizado Especial Criminal (pena máx. ≤ 2 anos) ou vara criminal comum.",
+          ["Única peça em que você atua pela ACUSAÇÃO (querelante)",
+           "Exposição do fato com todas as circunstâncias (art. 41)",
+           "Qualificação do querelado + classificação do crime",
+           "Rol de testemunhas + pedido de condenação",
+           "PROCURAÇÃO com poderes especiais e menção ao fato (art. 44)"],
+          "Dois itens de espelho matam a peça se esquecidos: o <b>prazo decadencial de 6 meses</b> e a <b>procuração com poderes especiais</b> mencionando o fato. Nos crimes contra a honra, lembre do pedido de audiência de reconciliação (art. 520).",
+`EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DO JUIZADO ESPECIAL CRIMINAL DA COMARCA DE ...
+(ou: da ... Vara Criminal, conforme a pena máxima)
+
+
+
+FULANO..., (qualificação completa do QUERELANTE), vem, por seu advogado, com procuração com poderes especiais anexa (art. 44 CPP), com fundamento nos arts. 41 e 44 do Código de Processo Penal e no art. 100, §2º, do Código Penal, oferecer
+
+QUEIXA-CRIME
+
+em face de BELTRANO..., (qualificação completa do QUERELADO), pela prática do crime previsto no art. ... do Código Penal, pelos fatos a seguir.
+
+I – DOS FATOS
+(Exposição do fato criminoso, com TODAS as suas circunstâncias — art. 41 CPP: quando, onde, como, com que meio, presenciado por quem.)
+
+II – DO DIREITO
+A conduta do querelado amolda-se ao tipo do art. ... do CP (ex.: calúnia — art. 138; difamação — art. 139; injúria — art. 140), tratando-se de crime de ação penal privada (art. 145 CP), sendo tempestiva a presente queixa (art. 38 CPP).
+
+III – DOS PEDIDOS
+Ante o exposto, requer:
+a) o recebimento da presente queixa-crime;
+b) a designação de audiência de reconciliação (art. 520 CPP — crimes contra a honra);
+c) a citação do querelado para responder à acusação;
+d) a oitiva das testemunhas abaixo arroladas;
+e) ao final, a CONDENAÇÃO do querelado nas penas do art. ... do CP;
+f) a fixação de valor mínimo de indenização (art. 387, IV, CPP).
+
+Dá-se à causa o valor de R$ ...
+
+ROL DE TESTEMUNHAS:
+1. Nome..., endereço...;
+2. Nome..., endereço...
+
+${FECHO}`)
+      }
+    ]
+  }
+]};
+
+/* ---------- navegação ---------- */
+let caminho = [];
+const palco = document.getElementById('palco');
+const trilhaEl = document.getElementById('trilha');
+
+function noAtual(){
+  let n = arvore;
+  for(const i of caminho) n = n.filhos[i];
+  return n;
+}
+
+function render(){
+  const n = noAtual();
+  renderTrilha();
+  const painelStats = document.querySelector('details.stats');
+  if(painelStats) painelStats.style.display = caminho.length === 0 ? '' : 'none';
+  palco.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'nivel';
+
+  if(n.peca){ div.appendChild(cartaoPeca(n.peca)); }
+  else {
+    const h = document.createElement('p');
+    h.className = 'pergunta';
+    h.textContent = n.pergunta;
+    div.appendChild(h);
+    const lista = document.createElement('div');
+    lista.className = 'cartoes';
+    n.filhos.forEach((f,i)=>{
+      const b = document.createElement('button');
+      b.className = 'cartao';
+      b.innerHTML = `<span class="ico">${f.ico}</span>
+        <span class="txt"><b>${f.titulo}</b><span>${f.desc||''}</span></span>
+        <span class="seta">❯</span>`;
+      b.addEventListener('click',()=>{ caminho.push(i); render(); window.scrollTo({top:0,behavior:'smooth'}); });
+      lista.appendChild(b);
+    });
+    div.appendChild(lista);
+  }
+  palco.appendChild(div);
+}
+
+const FREQ = {
+  "Apelação": "40% · 4× nos últimos 10",
+  "Apelação (decisões do Júri)": "Apelação: 40% · 4× nos últimos 10",
+  "Memoriais (Alegações Finais Escritas)": "20% · 2× nos últimos 10",
+  "Resposta à Acusação": "20% · 2× nos últimos 10",
+  "Contrarrazões à Apelação": "10% · 1× nos últimos 10",
+  "Agravo em Execução": "10% · 1× nos últimos 10"
+};
+
+function acharCaminho(nomePeca, no = arvore, trilhaAtual = []){
+  if(no.peca && no.peca.nome === nomePeca) return trilhaAtual;
+  if(no.filhos){
+    for(let i = 0; i < no.filhos.length; i++){
+      const achado = acharCaminho(nomePeca, no.filhos[i], [...trilhaAtual, i]);
+      if(achado) return achado;
+    }
+  }
+  return null;
+}
+
+document.querySelectorAll('.exame-link').forEach(b => {
+  b.addEventListener('click', () => {
+    const c = acharCaminho(b.dataset.peca);
+    if(c){ caminho = c; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+  });
+});
+
+function cartaoPeca(p){
+  const el = document.createElement('article');
+  el.className = 'autos';
+  const selo = FREQ[p.nome] ? `<span class="selo-freq">📊 ${FREQ[p.nome]}</span>` : '';
+  el.innerHTML = `
+    <div class="autos-rotulo">Peça cabível ${selo}</div>
+    <h2>${p.nome}</h2>
+    <div class="fundamento">${p.fundamento}</div>
+    <div class="carimbo-prazo"><b>${p.prazo}</b>prazo</div>
+    <div class="secao"><h3>Endereçamento</h3><p>${p.enderec}</p></div>
+    <div class="secao"><h3>Estrutura & pedidos</h3><ul>${p.pedidos.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="secao"><h3>Observação sobre o prazo</h3><p>${p.prazoNota}</p></div>
+    <div class="dica">💡 <b>Dica FGV:</b> ${p.dica}</div>
+    <details class="modelo">
+      <summary>Modelo da peça</summary>
+      <p class="nota-modelo">Esqueleto no padrão FGV: as reticências (...) marcam os pontos a preencher com os dados do enunciado. Nunca invente dados não fornecidos e jamais se identifique — assine apenas "Advogado..., OAB...".</p>
+      <pre>${escapa(p.modelo)}</pre>
+    </details>
+    <div class="acoes">
+      <button class="btn btn-volta" id="bVolta">‹ Voltar</button>
+      <button class="btn btn-inicio" id="bInicio">Recomeçar</button>
+    </div>`;
+  el.querySelector('#bVolta').addEventListener('click',()=>{ caminho.pop(); render(); });
+  el.querySelector('#bInicio').addEventListener('click',()=>{ caminho=[]; render(); });
+  return el;
+}
+
+function escapa(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderTrilha(){
+  trilhaEl.innerHTML = '';
+  const inicio = document.createElement('button');
+  inicio.textContent = 'Início';
+  inicio.addEventListener('click',()=>{ caminho=[]; render(); });
+  trilhaEl.appendChild(inicio);
+
+  let n = arvore;
+  caminho.forEach((idx,pos)=>{
+    n = n.filhos[idx];
+    const sep = document.createElement('span'); sep.className='sep'; sep.textContent='›';
+    trilhaEl.appendChild(sep);
+    if(pos === caminho.length-1){
+      const s = document.createElement('span'); s.className='atual';
+      s.textContent = n.peca ? n.peca.nome : n.titulo;
+      trilhaEl.appendChild(s);
+    } else {
+      const b = document.createElement('button');
+      b.textContent = n.titulo;
+      const corte = pos+1;
+      b.addEventListener('click',()=>{ caminho = caminho.slice(0,corte); render(); });
+      trilhaEl.appendChild(b);
+    }
+  });
+}
+
+render();
+</script>
+</body>
+</html>

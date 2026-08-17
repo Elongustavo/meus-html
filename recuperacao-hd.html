@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuperação de HD externo — guia de operação</title>
+<style>
+  :root{
+    --paper:#EFF1F4;
+    --paper-2:#E4E7EC;
+    --ink:#161A20;
+    --ink-soft:#4B525C;
+    --line:#CDD3DB;
+    --console:#12151B;
+    --console-2:#1B2029;
+    --console-text:#DDE3EA;
+    --prompt:#5FD08A;
+    --blue:#2563EB;
+    --amber:#C2740B;
+    --amber-bg:#FBEFD9;
+    --red:#C22C2C;
+    --red-bg:#FBE3E1;
+    --green:#1F8B4C;
+    --green-bg:#E0F0E4;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+    font-size:16px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 80px}
+
+  /* Header */
+  header{
+    border-left:4px solid var(--blue);
+    padding:6px 0 6px 16px;
+    margin-bottom:8px;
+  }
+  .eyebrow{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--blue);
+    margin:0 0 6px;
+    font-weight:600;
+  }
+  h1{
+    font-size:26px;
+    line-height:1.2;
+    margin:0 0 6px;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .sub{color:var(--ink-soft);margin:0;font-size:15px}
+
+  /* Context card */
+  .context{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin:22px 0 30px;
+    font-size:14.5px;
+  }
+  .context b{color:var(--ink)}
+  .context .row{display:flex;gap:8px;padding:3px 0}
+  .context .row span:first-child{color:var(--ink-soft);min-width:118px}
+
+  /* Steps */
+  .step{margin:0 0 34px;position:relative}
+  .step-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+  .num{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:14px;
+    font-weight:700;
+    color:#fff;
+    background:var(--ink);
+    width:30px;height:30px;
+    border-radius:7px;
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+    transform:translateY(2px);
+  }
+  h2{font-size:19px;margin:0;font-weight:650;line-height:1.3;letter-spacing:-.01em}
+  .step p{margin:0 0 12px}
+  .step p:last-child{margin-bottom:0}
+
+  /* Code block */
+  .code{
+    background:var(--console);
+    border-radius:var(--radius);
+    margin:12px 0;
+    overflow:hidden;
+    border:1px solid #05070A;
+  }
+  .code-top{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--console-2);
+    padding:7px 12px;
+    border-bottom:1px solid #05070A;
+  }
+  .code-label{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:#8A94A3;
+  }
+  .copy-btn{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-size:12.5px;font-weight:600;
+    color:var(--console-text);
+    background:#2C333E;
+    border:1px solid #3A424E;
+    border-radius:6px;
+    padding:5px 12px;
+    cursor:pointer;
+    transition:background .15s,color .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .copy-btn:hover{background:#39424F}
+  .copy-btn:active{background:#454F5C}
+  .copy-btn.ok{background:var(--prompt);color:#0B1710;border-color:var(--prompt)}
+  pre{
+    margin:0;padding:14px 14px;
+    overflow-x:auto;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:13.5px;
+    line-height:1.65;
+    color:var(--console-text);
+    -webkit-overflow-scrolling:touch;
+  }
+  pre .p{color:var(--prompt);user-select:none}
+  pre .c{color:#7C8798}
+
+  /* Callouts */
+  .note{
+    border-radius:var(--radius);
+    padding:12px 15px;
+    margin:14px 0;
+    font-size:14.5px;
+    border:1px solid;
+  }
+  .note b{display:block;margin-bottom:3px;font-size:13px;letter-spacing:.03em;text-transform:uppercase}
+  .note.info{background:#E7EEFB;border-color:#BFD2F5;color:#1B355F}
+  .note.info b{color:var(--blue)}
+  .note.warn{background:var(--amber-bg);border-color:#F0D9A8;color:#6B4906}
+  .note.warn b{color:var(--amber)}
+  .note.danger{background:var(--red-bg);border-color:#F2C4C0;color:#7A2320}
+  .note.danger b{color:var(--red)}
+  .note.ok{background:var(--green-bg);border-color:#BEDFC7;color:#1B5A34}
+  .note.ok b{color:var(--green)}
+  .note p{margin:6px 0 0}
+  .note code{
+    background:rgba(0,0,0,.07);
+    padding:1px 5px;border-radius:4px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;
+  }
+
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:4px 0}
+  a{color:var(--blue);text-decoration:none;border-bottom:1px solid #B8CBF0}
+  a:hover{border-bottom-color:var(--blue)}
+  hr{border:none;border-top:1px solid var(--line);margin:36px 0}
+
+  .divider-label{
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 4px;
+  }
+  footer{
+    margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Operação de recuperação</p>
+    <h1>Recuperar fotos e vídeos de HD externo com defeito</h1>
+    <p class="sub">Método por clonagem segura com <b>GNU ddrescue</b> — o padrão para discos que estão “ficando ruins”.</p>
+  </header>
+
+  <div class="context">
+    <div class="row"><span>Sintoma</span><span>Lento / travando, mas ainda monta</span></div>
+    <div class="row"><span>Sistema</span><span>PC com Windows</span></div>
+    <div class="row"><span>Destino</span><span>Disco livre ≥ tamanho do HD com defeito</span></div>
+    <div class="row"><span>Princípio</span><span><b>Nunca copie direto do HD ruim.</b> Clone primeiro, mexa só na cópia.</span></div>
+  </div>
+
+  <div class="note info">
+    <b>Por que clonar antes de copiar</b>
+    Um disco com setores falhando piora a cada leitura. Copiar arquivo por arquivo faz o Windows reler as áreas ruins várias vezes e acelera a morte do disco. O ddrescue faz uma passada única, inteligente, pulando o que está ruim e voltando depois — extraindo o máximo com o mínimo de desgaste.
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-head"><div class="num">1</div><h2>Preparar o hardware</h2></div>
+    <p>Antes de qualquer coisa, monte o cenário certo — a maioria dos fracassos acontece por conexão instável, não por defeito do disco.</p>
+    <ul>
+      <li>Conecte o HD com defeito <b>direto numa porta USB traseira</b> do PC. Nada de hub, extensão ou porta frontal.</li>
+      <li>Use um cabo USB curto e de qualidade. Cabo ruim = leituras que falham sem o disco ter culpa.</li>
+      <li>Conecte também o <b>disco de destino</b> (onde a cópia vai ficar). Ele precisa ter espaço maior ou igual ao HD inteiro — não só ao tamanho dos arquivos.</li>
+      <li>Se o HD for de 2,5" alimentado por USB, evite deixá-lo pendurado ou em pé — apoiado e imóvel reduz falha de leitura.</li>
+    </ul>
+    <div class="note warn">
+      <b>Atenção</b>
+      A partir daqui, trate o HD com defeito como se tivesse uma leitura só. Ligou, começou o processo, deixa rodar. Ligar e desligar repetidamente é o que mais mata esses discos.
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-head"><div class="num">2</div><h2>Criar o pendrive de resgate (SystemRescue)</h2></div>
+    <p>O ddrescue roda em Linux. Você não precisa instalar Linux — vai só dar boot por um pendrive. O <b>SystemRescue</b> já vem com tudo pronto.</p>
+    <ul>
+      <li>Num PC funcionando, baixe a ISO em <a href="https://www.system-rescue.org/Download/">system-rescue.org/Download</a>.</li>
+      <li>Baixe o <a href="https://rufus.ie/">Rufus</a> para gravar a ISO num pendrive (mínimo 2&nbsp;GB — o conteúdo dele será apagado).</li>
+      <li>No Rufus: selecione o pendrive, aponte a ISO, deixe o padrão e clique em <b>START</b>.</li>
+    </ul>
+    <p>Com o pendrive pronto, reinicie o PC e entre no menu de boot. A tecla varia por placa — as mais comuns:</p>
+    <div class="note info">
+      <b>Menu de boot</b>
+      <p>Aperte repetidamente durante o logo da placa: <code>F12</code> (Dell, Lenovo, Asus), <code>F8</code> ou <code>F11</code> (Gigabyte, MSI), <code>Esc</code> (HP). Depois é só escolher o pendrive USB na lista e, no menu do SystemRescue, apertar Enter na primeira opção.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-head"><div class="num">3</div><h2>Identificar os discos (passo crítico)</h2></div>
+    <p>Já no SystemRescue (tela preta com terminal), o primeiro trabalho é descobrir qual dispositivo é o HD ruim e qual é o destino. <b>Errar aqui apaga o disco errado.</b> Liste tudo:</p>
+
+    <div class="code">
+      <div class="code-top"><span class="code-label">Terminal — listar discos</span>
+        <button class="copy-btn" data-code="lsblk -o NAME,SIZE,MODEL,SERIAL,MOUNTPOINT">Copiar</button></div>
+      <pre><span class="p">#</span> lsblk -o NAME,SIZE,MODEL,SERIAL,MOUNTPOINT</pre>
+    </div>
+
+    <p>Vai aparecer algo assim. Use o <b>tamanho</b> e o <b>modelo</b> para reconhecer cada um:</p>
+    <div class="code">
+      <div class="code-top"><span class="code-label">Exemplo de saída</span></div>
+      <pre><span class="c">NAME   SIZE   MODEL              SERIAL      MOUNTPOINT</span>
+sda    465G   WDC_WD5000...      WX61A...        &larr; disco de destino
+sdb      1T   Seagate_Expansion  NA8K...         &larr; HD COM DEFEITO
+ └─sdb1   1T                                     /run/media/...</pre>
+    </div>
+
+    <div class="note danger">
+      <b>Confira duas vezes</b>
+      <p>Anote com certeza: <code>ORIGEM</code> = o HD com defeito (ex.: <code>/dev/sdb</code>) e <code>DESTINO</code> = o disco vazio (ex.: <code>/dev/sda</code>). Nos comandos abaixo, onde estiver <code>sdb</code> e <code>sda</code>, troque pelas letras <b>que apareceram no SEU computador</b>. Se tiver qualquer dúvida sobre qual é qual, pare e me mande a saída do <code>lsblk</code>.</p>
+    </div>
+
+    <p>Agora monte o disco de destino para poder gravar a imagem nele:</p>
+    <div class="code">
+      <div class="code-top"><span class="code-label">Terminal — montar destino</span>
+        <button class="copy-btn" data-code="mkdir -p /mnt/dest
+mount /dev/sda1 /mnt/dest">Copiar</button></div>
+      <pre><span class="p">#</span> mkdir -p /mnt/dest
+<span class="p">#</span> mount /dev/sda1 /mnt/dest</pre>
+    </div>
+    <p style="font-size:14px;color:var(--ink-soft)">Use a partição do <b>destino</b> aqui (<code>sda1</code>, com o número). Se der erro de sistema de arquivos, me avise o formato do disco de destino.</p>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-head"><div class="num">4</div><h2>Clonar com ddrescue — 1ª passada (rápida)</h2></div>
+    <p>Esta passada copia tudo que lê fácil e <b>pula</b> as áreas problemáticas para voltar nelas depois. É a parte mais importante: recupera a maioria dos dados sem forçar os setores ruins.</p>
+
+    <div class="code">
+      <div class="code-top"><span class="code-label">Terminal — 1ª passada</span>
+        <button class="copy-btn" data-code="ddrescue -f -n -b4096 /dev/sdb /mnt/dest/hd.img /mnt/dest/hd.map">Copiar</button></div>
+      <pre><span class="p">#</span> ddrescue -f -n -b4096 /dev/sdb /mnt/dest/hd.img /mnt/dest/hd.map</pre>
+    </div>
+
+    <div class="note info">
+      <b>O que cada parte faz</b>
+      <p><code>/dev/sdb</code> = HD com defeito (origem) · <code>hd.img</code> = a cópia que está sendo criada · <code>hd.map</code> = arquivo que registra o progresso · <code>-n</code> = pula áreas ruins nesta passada · <code>-f</code> = permite gravar em arquivo · <code>-b4096</code> = tamanho de bloco comum em HDs modernos.</p>
+    </div>
+    <p>A tela mostra o progresso em tempo real: quanto já foi recuperado (<i>rescued</i>) e quanto falta. Deixe rodar sem mexer.</p>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-head"><div class="num">5</div><h2>Clonar — 2ª passada (recuperar o resto)</h2></div>
+    <p>Agora o ddrescue volta só nas áreas que ficaram para trás e tenta de novo, com mais insistência. Como ele usa o <code>hd.map</code>, não reprocessa o que já deu certo.</p>
+
+    <div class="code">
+      <div class="code-top"><span class="code-label">Terminal — 2ª passada</span>
+        <button class="copy-btn" data-code="ddrescue -d -f -r3 -b4096 /dev/sdb /mnt/dest/hd.img /mnt/dest/hd.map">Copiar</button></div>
+      <pre><span class="p">#</span> ddrescue -d -f -r3 -b4096 /dev/sdb /mnt/dest/hd.img /mnt/dest/hd.map</pre>
+    </div>
+
+    <div class="note info">
+      <b>Novidades desta passada</b>
+      <p><code>-d</code> = acesso direto ao disco (leitura mais fiel dos setores) · <code>-r3</code> = tenta reler cada área ruim até 3 vezes antes de desistir.</p>
+    </div>
+
+    <div class="note ok">
+      <b>Bom saber</b>
+      <p>O <code>hd.map</code> é seu seguro: se o PC desligar ou você precisar parar, rode <b>o mesmo comando</b> de novo e ele retoma exatamente de onde parou. Nada do que já foi recuperado se perde.</p>
+    </div>
+    <p style="font-size:14px;color:var(--ink-soft)">Se o percentual recuperado já estiver muito alto (ex.: 99,9%) e o resto estiver demorando horas por uns poucos setores, pode interromper com <code>Ctrl+C</code> — o que sobra costuma ser irrelevante ou irrecuperável.</p>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-head"><div class="num">6</div><h2>Desligar o HD e voltar ao Windows</h2></div>
+    <p>Terminou a clonagem? O HD com defeito <b>cumpriu o papel dele</b>. Desmonte, desligue e guarde — daqui pra frente você só trabalha na imagem <code>hd.img</code>.</p>
+    <div class="code">
+      <div class="code-top"><span class="code-label">Terminal — encerrar com segurança</span>
+        <button class="copy-btn" data-code="umount /mnt/dest
+sync
+poweroff">Copiar</button></div>
+      <pre><span class="p">#</span> umount /mnt/dest
+<span class="p">#</span> sync
+<span class="p">#</span> poweroff</pre>
+    </div>
+    <p>Tire o pendrive, ligue o PC normalmente no Windows e conecte o <b>disco de destino</b> — é nele que está o arquivo <code>hd.img</code>.</p>
+  </div>
+
+  <hr>
+  <p class="divider-label">Extrair os arquivos da imagem</p>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-head"><div class="num">7</div><h2>Abrir a imagem e recuperar as fotos/vídeos</h2></div>
+    <p>Existem dois caminhos, dependendo de quão íntegra a cópia ficou. Tente o primeiro; se falhar, vá para o segundo.</p>
+
+    <div class="note ok">
+      <b>Caminho A — imagem íntegra (tente primeiro)</b>
+      <p>No Windows, instale o <a href="https://github.com/DiskCryptor/OSFMount">OSFMount</a> (gratuito). Abra → <i>Mount new</i> → aponte para <code>hd.img</code> → monte como somente leitura. Se a estrutura estiver boa, o disco aparece com letra no Explorer e você simplesmente copia suas fotos e vídeos para uma pasta segura. <br>Alternativa rápida: o <b>7-Zip</b> também abre <code>.img</code> direto para navegar e extrair.</p>
+    </div>
+
+    <div class="note info">
+      <b>Caminho B — estrutura corrompida</b>
+      <p>Se a imagem não montar ou as pastas vierem quebradas, use o <a href="https://www.cgsecurity.org/wiki/PhotoRec">PhotoRec</a> (gratuito, roda no Windows). Ele ignora o sistema de arquivos e recupera por <b>assinatura de arquivo</b> — encontra JPG, PNG, MP4, MOV etc. mesmo sem pasta. Aponte-o para o <code>hd.img</code>, escolha os tipos de mídia e uma pasta de saída num disco diferente.</p>
+      <p>Para recuperação com nomes/pastas preservados quando possível, o <a href="https://dmde.com/">DMDE</a> (versão free) é excelent­e e também lê direto o <code>hd.img</code>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-head"><div class="num">8</div><h2>Validar e proteger o que recuperou</h2></div>
+    <ul>
+      <li>Abra uma <b>amostra</b> de fotos e vídeos de pastas diferentes. Vídeos são os que mais sofrem com setores ruins — confira se tocam até o fim.</li>
+      <li>Guarde em <b>dois lugares</b>: outro disco físico + uma nuvem (Google Fotos, Drive, OneDrive). Cópia única não é backup.</li>
+      <li><b>Aposente o HD com defeito.</b> Ele pode até voltar a funcionar por um tempo, mas setor ruim não se cura — não confie mais nada importante a ele.</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="note danger">
+    <b>Regra de parada — leia antes de começar</b>
+    <p>Se durante a clonagem o HD começar a fazer <b>cliques rítmicos</b>, bipes, ou <b>sumir e voltar</b> do sistema repetidamente: <b>desligue e pare imediatamente</b>. Nesse ponto o defeito virou mecânico (cabeça de leitura), e cada tentativa a mais destrói dados de forma permanente. A partir daí, a única saída segura é um laboratório especializado em recuperação de dados — caro, mas é o único jeito de não perder de vez. Vale a pena só se as fotos forem realmente insubstituíveis.</p>
+  </div>
+
+  <div class="note warn">
+    <b>Alternativa sem sair do Windows</b>
+    <p>Se preferir não usar o pendrive Linux, o <a href="https://dmde.com/">DMDE</a> faz a clonagem disco→imagem com tratamento de setores ruins direto no Windows (menu <i>Tools → Copy sectors</i>). É menos robusto que o ddrescue, mas para um caso leve como o seu — “lento mas ainda abre” — costuma dar conta. O restante do guia (passos 7 e 8) segue igual.</p>
+  </div>
+
+  <footer>
+    Antes de rodar os passos 4 e 5, me confirme a <b>marca, modelo e tamanho</b> do HD. Alguns externos (Seagate e WD com criptografia de hardware na placa USB) têm particularidades que mudam a abordagem — melhor saber antes de clonar.
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var code = btn.getAttribute('data-code');
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copiado ✓';
+        btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove('ok'); }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code).then(done).catch(function(){ fallback(code, done); });
+      } else { fallback(code, done); }
+    });
+  });
+  function fallback(text, cb){
+    var t = document.createElement('textarea');
+    t.value = text; t.style.position='fixed'; t.style.opacity='0';
+    document.body.appendChild(t); t.focus(); t.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(t); cb();
+  }
+</script>
+</body>
+</html>

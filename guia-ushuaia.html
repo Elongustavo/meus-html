@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Completo — Palhoça → Ushuaia · casal · Himalayan 450</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fog:#EDF1F2; --paper:#FFFFFF; --ink:#0E1B20;
+    --petrol:#175E63; --signal:#F5B700; --danger:#C4432B;
+    --mute:#5C6E74; --line:#D6DEE0; --mint:#F3FAF9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{background:var(--fog);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;padding:16px 14px 60px}
+  .wrap{max-width:760px;margin:0 auto}
+
+  .sign{background:var(--ink);color:#fff;border-radius:14px;border:3px solid #fff;outline:2px solid var(--ink);padding:22px 20px 20px;position:relative;overflow:hidden}
+  .sign .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--signal);text-transform:uppercase}
+  .sign h1{font-variation-settings:'wdth' 68,'wght' 850;font-size:clamp(30px,9vw,52px);line-height:.95;text-transform:uppercase;margin:8px 0 4px}
+  .sign h1 .arrow{color:var(--signal)}
+  .sign .stats{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+  .sign .stats b{color:var(--signal);font-weight:600}
+  .sign::after{content:"";position:absolute;inset:auto 0 0 0;height:6px;background:repeating-linear-gradient(90deg,var(--signal) 0 26px,transparent 26px 44px)}
+
+  nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  nav a{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--petrol);background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:5px 11px}
+
+  section{margin-top:30px}
+  h2{font-variation-settings:'wdth' 72,'wght' 800;text-transform:uppercase;font-size:20px;display:flex;align-items:baseline;gap:10px}
+  h2 small{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--mute);letter-spacing:.1em;text-transform:none}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-top:12px;overflow:hidden}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{background:var(--petrol);color:#fff;font-variation-settings:'wdth' 78,'wght' 700;text-transform:uppercase;font-size:11.5px;letter-spacing:.06em;padding:10px 10px;text-align:right}
+  thead th:first-child{text-align:left;padding-left:14px}
+  tbody td{padding:9px 10px;border-top:1px solid var(--line);text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;white-space:nowrap}
+  tbody td:first-child{text-align:left;padding-left:14px;font-family:'Archivo',sans-serif;font-size:13px;white-space:normal}
+  tbody td:first-child small{display:block;color:var(--mute);font-size:11px}
+  tr.total td{background:var(--signal);border-top:2px solid var(--ink);font-weight:600;font-size:13.5px;padding:12px 10px}
+  tr.total td:first-child{font-variation-settings:'wdth' 78,'wght' 800;text-transform:uppercase}
+
+  .route{padding:0}
+  .leg{display:grid;grid-template-columns:44px 1fr auto;gap:0 10px;padding:10px 14px 10px 10px}
+  .leg + .leg{border-top:1px solid var(--line)}
+  .leg .day{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--mute);line-height:1.3;padding-top:2px}
+  .leg .day b{display:block;font-size:13px;color:var(--petrol);font-weight:600}
+  .leg .dest{font-size:14px}
+  .leg .dest b{font-variation-settings:'wdth' 82,'wght' 700}
+  .leg .dest small{display:block;color:var(--mute);font-size:11.5px;margin-top:1px}
+  .leg .km{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding-top:2px;white-space:nowrap}
+  .leg.rest{background:var(--mint)}
+  .tag{display:inline-block;margin-top:4px;margin-right:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.04em;padding:1.5px 6px;border-radius:3px;background:var(--signal);color:var(--ink)}
+  .tag.wind{background:var(--danger);color:#fff}
+  .tag.see{background:var(--petrol);color:#fff}
+  .divider{padding:7px 14px;background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+  .divider span{color:var(--signal)}
+
+  .poi{padding:12px 14px;border-top:1px solid var(--line)}
+  .poi:first-child{border-top:none}
+  .poi h3{font-variation-settings:'wdth' 80,'wght' 750;font-size:15px}
+  .poi .meta{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--petrol);letter-spacing:.06em;text-transform:uppercase;margin:2px 0 4px}
+  .poi p{font-size:13.5px}
+
+  .item{padding:11px 14px;border-top:1px solid var(--line);font-size:13.5px}
+  .item:first-child{border-top:none}
+  .item b{font-variation-settings:'wght' 700}
+  .item .k{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--petrol);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+  .item.warn .k{color:var(--danger)}
+
+  ul.plain{list-style:none;padding:10px 14px 14px}
+  ul.plain li{padding:5px 0 5px 22px;position:relative;font-size:13.5px;border-bottom:1px dashed var(--line)}
+  ul.plain li:last-child{border-bottom:none}
+  ul.plain li::before{content:"▸";position:absolute;left:4px;color:var(--signal);font-weight:700}
+
+  footer{margin-top:36px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--mute);letter-spacing:.12em;text-transform:uppercase}
+  @media (min-width:560px){body{padding:28px 20px 70px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sign">
+    <div class="eyebrow">Guia completo · Casal · Himalayan 450 · Verão 2027</div>
+    <h1>Palhoça <span class="arrow">→</span> Ushuaia</h1>
+    <div class="stats">
+      <span><b>9.570 km</b> ida e volta</span>
+      <span><b>16 dias</b> 30 jan – 14 fev</span>
+      <span><b>R$ 10,5–12,7 mil</b> orçamento do casal</span>
+    </div>
+  </div>
+
+  <nav>
+    <a href="#orcamento">Orçamento</a><a href="#roteiro">Roteiro</a><a href="#pontos">Pontos turísticos</a>
+    <a href="#hospedagem">Onde ficar</a><a href="#docs">Documentos</a><a href="#problemas">Problemas reais</a>
+    <a href="#moto">Himalayan 450</a><a href="#manutencao">Manutenção</a><a href="#pecas">Peças</a>
+  </nav>
+
+  <!-- ═══ ORÇAMENTO ═══ -->
+  <section id="orcamento">
+    <h2>Orçamento <small>casal · valores em R$</small></h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>Categoria</th><th>Estimativa</th></tr></thead>
+        <tbody>
+          <tr><td>Combustível<small>~480 L com garupa · nafta mais barata na Patagônia</small></td><td>2.500 – 3.000</td></tr>
+          <tr><td>Hospedagem<small>15 noites em quarto duplo</small></td><td>2.800 – 3.700</td></tr>
+          <tr><td>Alimentação<small>café no hotel + mercado + janta</small></td><td>3.300 – 4.000</td></tr>
+          <tr><td>Seguros<small>Carta Verde + SOAP + seguro viagem p/ 2</small></td><td>850</td></tr>
+          <tr><td>Balsa e pedágios</td><td>300</td></tr>
+          <tr><td>Parque Nacional Tierra del Fuego (2 pessoas)</td><td>200</td></tr>
+          <tr><td>Moto<small>consumíveis + óleo/filtro dos 15 mil em Ushuaia</small></td><td>550 – 650</td></tr>
+          <tr class="total"><td>Total</td><td>10.500 – 12.700</td></tr>
+        </tbody>
+      </table>
+      <div class="item"><b>Fora da conta:</b> reserva de emergência de R$ 2.000 e pneus, se a revisão dos 10 mil condenar os originais (R$ 1.500–2.000 o jogo — na dúvida, troque antes de sair).</div>
+    </div>
+  </section>
+
+  <!-- ═══ ROTEIRO ═══ -->
+  <section id="roteiro">
+    <h2>Roteiro <small>16 dias · 30 jan – 14 fev 2027</small></h2>
+    <div class="card route">
+      <div class="divider"><span>IDA</span> · 4.785 km em 7 dias</div>
+      <div class="leg"><div class="day"><b>D1</b>sáb 30/01</div><div class="dest"><b>Palhoça → Uruguaiana</b><small>BR-290 · dorme no Brasil, fronteira cedo</small></div><div class="km">870 km</div></div>
+      <div class="leg"><div class="day"><b>D2</b>dom 31/01</div><div class="dest"><b>→ Zárate / Campana</b><small>Paso de los Libres · Ruta 14</small><span class="tag">fronteira BR→AR</span></div><div class="km">670 km</div></div>
+      <div class="leg"><div class="day"><b>D3</b>seg 01/02</div><div class="dest"><b>→ Bahía Blanca</b><small>contorna Buenos Aires pela Ruta 6</small></div><div class="km">700 km</div></div>
+      <div class="leg"><div class="day"><b>D4</b>ter 02/02</div><div class="dest"><b>→ Puerto Madryn</b><small>fim de tarde na costanera</small><span class="tag see">baleias não — mas lobos-marinhos sim</span></div><div class="km">720 km</div></div>
+      <div class="leg"><div class="day"><b>D5</b>qua 03/02</div><div class="dest"><b>→ Caleta Olivia</b><small>manhã livre: desvio a Punta Tombo (pinguins)</small><span class="tag see">pinguineira</span></div><div class="km">520 km</div></div>
+      <div class="leg"><div class="day"><b>D6</b>qui 04/02</div><div class="dest"><b>→ Río Gallegos</b><small>sair 6h30 · asfalto ondulado até Comodoro · postos a cada 180–200 km</small><span class="tag wind">vento forte</span><span class="tag">abastecer sempre</span></div><div class="km">700 km</div></div>
+      <div class="leg"><div class="day"><b>D7</b>sex 05/02</div><div class="dest"><b>→ USHUAIA</b><small>2 fronteiras + balsa · toninhas no estreito · parada na Panadería La Unión em Tolhuin</small><span class="tag">nada de fruta/queijo/mel/carne</span></div><div class="km">590 km</div></div>
+      <div class="divider"><span>FIM DO MUNDO</span> · 2 dias</div>
+      <div class="leg rest"><div class="day"><b>D8</b>sáb 06/02</div><div class="dest"><b>Ushuaia</b><small>Parque Nacional + foto na placa do fim da Ruta 3 (Bahía Lapataia)</small><span class="tag see">a foto obrigatória</span></div><div class="km">passeio</div></div>
+      <div class="leg rest"><div class="day"><b>D9</b>dom 07/02</div><div class="dest"><b>Ushuaia</b><small>manhã: troca de óleo + filtro (15 mil) · tarde: centro, museus, centolla</small><span class="tag">manutenção</span></div><div class="km">oficina</div></div>
+      <div class="divider"><span>VOLTA</span> · 4.785 km em 7 dias · espelho da ida</div>
+      <div class="leg"><div class="day"><b>D10</b>seg 08/02</div><div class="dest"><b>→ Río Gallegos</b></div><div class="km">590 km</div></div>
+      <div class="leg"><div class="day"><b>D11</b>ter 09/02</div><div class="dest"><b>→ Caleta Olivia</b><span class="tag wind">vento forte</span></div><div class="km">700 km</div></div>
+      <div class="leg"><div class="day"><b>D12</b>qua 10/02</div><div class="dest"><b>→ Puerto Madryn</b></div><div class="km">520 km</div></div>
+      <div class="leg"><div class="day"><b>D13</b>qui 11/02</div><div class="dest"><b>→ Bahía Blanca</b></div><div class="km">720 km</div></div>
+      <div class="leg"><div class="day"><b>D14</b>sex 12/02</div><div class="dest"><b>→ Zárate / Campana</b></div><div class="km">700 km</div></div>
+      <div class="leg"><div class="day"><b>D15</b>sáb 13/02</div><div class="dest"><b>→ Uruguaiana</b><span class="tag">fronteira AR→BR</span></div><div class="km">670 km</div></div>
+      <div class="leg"><div class="day"><b>D16</b>dom 14/02</div><div class="dest"><b>→ Palhoça</b><small>casa</small></div><div class="km">870 km</div></div>
+    </div>
+  </section>
+
+  <!-- ═══ PONTOS TURÍSTICOS ═══ -->
+  <section id="pontos">
+    <h2>Vale a pena parar <small>no trajeto ou com desvio curto</small></h2>
+    <div class="card">
+      <div class="poi"><h3>Punta Tombo — a maior pinguineira do continente</h3><div class="meta">D5 · desvio ~110 km de Trelew · pinguins de set a abr</div><p>Centenas de milhares de pinguins-de-magalhães andando ao seu lado nas passarelas. Em fevereiro os filhotes já estão grandes. Para a esposa, provavelmente o ponto alto da ida. Saia cedo de Madryn, visite e siga para Caleta Olivia.</p></div>
+      <div class="poi"><h3>Puerto Madryn — costanera e lobos-marinhos</h3><div class="meta">D4 e D12 · na rota</div><p>Fim de tarde na orla com o mar do Golfo Nuevo. Temporada de baleias é jun–dez (não verão), mas a reserva de lobos-marinhos de Punta Loma fica a 15 km. Melhor cidade da Ruta 3 para jantar bem.</p></div>
+      <div class="poi"><h3>Parque Nacional Monte León</h3><div class="meta">D6 · portão na própria Ruta 3, entre San Julián e Río Gallegos</div><p>Falésias, ilha cheia de aves e mais pinguins — praticamente sem desvio. Se o vento estiver dando trégua e o horário permitir, vale 1–2 h.</p></div>
+      <div class="poi"><h3>Estreito de Magalhães — toninhas na balsa</h3><div class="meta">D7 · travessia de Punta Delgada</div><p>Toninhas-overas (parecem mini-orcas) costumam acompanhar a balsa. Fique no convés com a câmera pronta — a travessia dura só uns 20 minutos.</p></div>
+      <div class="poi"><h3>Panadería La Unión — Tolhuin</h3><div class="meta">D7 · na rota, 100 km antes de Ushuaia</div><p>A padaria mais famosa da rota, ponto de peregrinação de motociclista: paredes cobertas de adesivos e fotos de viajantes do mundo todo. Café, factura e a certeza de que falta pouco. Leve um adesivo seu para deixar lá.</p></div>
+      <div class="poi"><h3>Paso Garibaldi</h3><div class="meta">D7 · na rota</div><p>A serra final antes de Ushuaia: curvas de montanha, o Lago Escondido e o Fagnano lá embaixo. Depois de 4.000 km de reta, essas curvas são o prêmio. Mirante na estrada — pare.</p></div>
+      <div class="poi"><h3>Bahía Lapataia — o fim da Ruta 3</h3><div class="meta">D8 · dentro do Parque Nacional, ~25 km do centro</div><p>A placa do fim da estrada, onde todo motociclista que chega tira a foto com a moto — os últimos km são de rípio leve, tranquilo para a Himalayan. É literalmente onde o continente acaba.</p></div>
+      <div class="poi"><h3>Ushuaia — cidade</h3><div class="meta">D8–D9</div><p>Letreiro "Ushuaia fin del mundo" no porto, Museu do Presídio, Museu Yámana, e a centolla (king crab) — o jantar comemorativo do casal. Navegação do Canal Beagle é opcional (~3 h de barco; bonita, mas alguns relatos a acham longa pelo preço).</p></div>
+    </div>
+  </section>
+
+  <!-- ═══ HOSPEDAGEM ═══ -->
+  <section id="hospedagem">
+    <h2>Onde ficar <small>testados por viajantes · reservar 1 dia antes, exceto Ushuaia</small></h2>
+    <div class="card">
+      <div class="item"><span class="k">D1 · São Gabriel (alternativa: dormir em Uruguaiana)</span><b>Hotel San Isidro</b> — na própria BR-290, recepção 24 h. Em Uruguaiana há hotéis simples de fronteira; escolha um com garagem.</div>
+      <div class="item"><span class="k">D2 · Zárate / Campana</span>Hotéis de rota na Panamericana — priorize estacionamento fechado; região movimentada.</div>
+      <div class="item"><span class="k">D3 · Bahía Blanca</span>Hotéis no centro com cochera (garagem coberta) — palavra-chave que importa na Argentina inteira.</div>
+      <div class="item"><span class="k">D4 · Puerto Madryn</span>Hostería/apart perto da costanera para jantar a pé. Cidade turística, tem de tudo.</div>
+      <div class="item"><span class="k">D5 · Caleta Olivia</span><b>Patagonia Hotel</b> — estacionamento seguro para motos elogiado por motociclistas e restaurante bom no local (a cidade tem pouca opção à noite).</div>
+      <div class="item"><span class="k">D6 · Río Gallegos</span><b>Hotel Patagonia</b> (nota 4,5, restaurante bom) ou <b>Amerian Apart</b> com estacionamento no local. Cidade de passagem — chegue, coma, durma.</div>
+      <div class="item"><span class="k">D7–D9 · Ushuaia</span><b>Antarctica Hostel</b> (4,7, quarto privativo com banheiro, cozinha equipada, ótima localização) ou apart-hotéis no centro. <b>Reservar já ao fechar a data</b> — fevereiro lota e os preços sobem.</div>
+    </div>
+  </section>
+
+  <!-- ═══ DOCUMENTOS ═══ -->
+  <section id="docs">
+    <h2>Documentos <small>os dois países exigem</small></h2>
+    <div class="card"><ul class="plain">
+      <li><b>CNH física válida</b> (a digital não vale fora do Brasil) + RG bom estado (menos de 10 anos) ou passaporte — para os dois</li>
+      <li><b>CRLV 2026/2027 impresso</b> — na fronteira o papel resolve mais rápido que o app</li>
+      <li><b>Se financiada:</b> autorização do banco para sair do país — o Chile costuma exigir e a emissão demora. <b>Primeiro item a resolver.</b></li>
+      <li><b>Carta Verde</b> impressa (seguro obrigatório Mercosul — Argentina)</li>
+      <li><b>SOAP</b> — seguro obrigatório do Chile para o trecho da Terra do Fogo; compre online antes, cobrindo ida e volta</li>
+      <li><b>Papéis de admissão temporária da moto</b> — a aduana entrega ao entrar em cada país; guardar, pois pedem na saída</li>
+      <li>Seguro viagem/saúde para os dois (confirme se o do cartão cobre viagem rodoviária — em geral exige passagem emitida no cartão)</li>
+      <li>Cópias de tudo no Drive + fotos no celular dos dois + reservas de Ushuaia salvas offline</li>
+    </ul></div>
+  </section>
+
+  <!-- ═══ PROBLEMAS REAIS ═══ -->
+  <section id="problemas">
+    <h2>Problemas reais da estrada <small>relatados por quem já fez</small></h2>
+    <div class="card">
+      <div class="item warn"><span class="k">O vento — o vilão nº 1</span>Relatos são unânimes: o vento lateral entre Trelew e Río Gallegos assusta até motociclista experiente. Com garupa é pior. Antídotos: sair de madrugada (cresce à tarde), reduzir velocidade, corpo solto, e parar sem culpa se passar do limite.</div>
+      <div class="item warn"><span class="k">Combustível escasso</span>Na Patagônia profunda há um posto a cada 180–200 km — e em Santa Cruz às vezes está sem nafta ou com fila. Regra: abastecer em todo posto do D5 ao D11, sempre. Autonomia real com garupa: ~340 km.</div>
+      <div class="item warn"><span class="k">Guanacos e ñandús na pista</span>Atravessam a Ruta 3 sem aviso, principalmente amanhecer e entardecer. Um guanaco tem o porte de uma lhama grande — colisão é gravíssima. Nunca rodar no escuro na Patagônia.</div>
+      <div class="item"><span class="k">Asfalto ondulado</span>O trecho Comodoro Rivadavia ↔ Caleta Olivia aparece nos relatos com remendos e ondulações. Reduza e avise a garupa.</div>
+      <div class="item"><span class="k">Frio no verão</span>Mesmo em fevereiro, manhãs de 3–8 °C do D6 em diante. Quem economiza em roupa térmica paga em sofrimento.</div>
+      <div class="item"><span class="k">Sem reserva de hotel</span>Viajantes citam chegar em Ushuaia sem reserva como a maior falha do planejamento — hotéis caros e lotados. Os pernoites de estrada podem ser reservados na véspera; Ushuaia não.</div>
+      <div class="item"><span class="k">Fronteiras</span>Quatro cruzamentos no D7 e D10 (Argentina↔Chile 2x cada). Em fevereiro pode ter fila de 1–2 h. Comer/descartar frutas, queijo, mel e carne antes do Chile — a multa do SAG é pesada.</div>
+    </div>
+  </section>
+
+  <!-- ═══ HIMALAYAN 450 ═══ -->
+  <section id="moto">
+    <h2>Himalayan 450 <small>pontos de atenção conhecidos</small></h2>
+    <div class="card">
+      <div class="item warn"><span class="k">Erro APS (acelerador eletrônico)</span>O problema mais relatado por proprietários no Brasil: erro do sensor de posição do acelerador cortando potência (modo de emergência ~30 km/h). O paliativo usado nas concessionárias é limpeza do conector. <b>Leve limpa-contato elétrico</b> e saiba onde fica o conector do punho — desligar/religar a chave às vezes destrava. Peça para checarem o chicote na revisão dos 10 mil.</div>
+      <div class="item"><span class="k">Arrefecimento</span>Há relatos de superaquecimento em unidades brasileiras. Na viagem o risco é baixo (clima frio, velocidade constante), mas confira nível do líquido a cada manhã e leve um pouco de aditivo pronto.</div>
+      <div class="item"><span class="k">Amortecedor traseiro e parafusaria</span>Relatos de amortecedor com comportamento irregular e itens soltando (regulagem de farol, banco). Com garupa + bagagem: ajuste a pré-carga no máximo adequado, e inclua no ritual da manhã uma checada rápida de parafusos (o checklist do manual pede exatamente isso).</div>
+      <div class="item"><span class="k">Painel TFT</span>Manchas no painel aparecem em reclamações. Nada a fazer na estrada — só garantia. Leve o Tripper/celular como navegação redundante.</div>
+      <div class="item"><span class="k">Pneus com câmara</span>A Himalayan 450 usa pneus <b>tube-type</b> (câmara) — dianteiro 90/90-21 e traseiro 140/80R17. Furo não se resolve com plug de tubeless: é desmontar o pneu. Por isso as câmaras reserva na lista de peças abaixo. Calibragem de manual: 32 psi (frente e trás) — com garupa e bagagem, mantenha os 32 e confira a frio toda manhã.</div>
+    </div>
+  </section>
+
+  <!-- ═══ MANUTENÇÃO ═══ -->
+  <section id="manutencao">
+    <h2>Plano de manutenção <small>concessionária vs. sua oficina</small></h2>
+    <div class="card">
+      <table>
+        <thead><tr><th>Revisão</th><th>Concessionária</th><th>Fazendo em casa</th></tr></thead>
+        <tbody>
+          <tr><td>5.000 / 15.000 / 25.000 km<small>checklist de inspeção + óleo e filtro</small></td><td>453 cada</td><td>~180 – 220 cada</td></tr>
+          <tr><td>10.000 km<small>inclui folga de válvulas (shim)</small></td><td>817</td><td>manter na autorizada*</td></tr>
+          <tr><td>20.000 km<small>válvulas + fluido de freio + filtro de ar + velas insp.</small></td><td>1.035</td><td>manter na autorizada*</td></tr>
+          <tr><td>30.000 km<small>inclui troca do arrefecimento</small></td><td>1.108</td><td>decidir conforme garantia</td></tr>
+          <tr class="total"><td>Economia até 25 mil km</td><td colspan="2">≈ R$ 700 – 800 (3 intermediárias em casa)</td></tr>
+        </tbody>
+      </table>
+      <div class="item"><span class="k">A estratégia recomendada (enquanto está na garantia)</span>As intermediárias (5/15/25 mil) são inspeção + óleo — exatamente o que você faz de olhos fechados na sua oficina. Já as grandes (10/20 mil) incluem a folga de válvulas <b>shim-under-bucket</b>: dá para fazer em casa, mas exige remover os comandos e ter jogo de pastilhas — e, mais importante, são o registro de que a moto foi acompanhada. *Com o histórico de problemas de motor e APS da 450, ter as grandes carimbadas pela autorizada vale mais que a economia enquanto durar a garantia.</div>
+      <div class="item"><span class="k">O que diz a lei (você vai gostar dessa)</span>A tabela da RE diz que revisar na autorizada é "obrigatório para manter a garantia" — mas pelo CDC a fabricante <b>não pode negar garantia apenas porque a manutenção foi feita fora da rede</b>, desde que o plano do manual tenha sido seguido, com peças adequadas e tudo documentado. Na prática: guarde nota fiscal de óleo/filtro, fotografe o hodômetro e mantenha um registro datado de cada serviço. É a sua prova — e, pelo que se vê no pós-venda da marca, você vai querer tê-la.</div>
+      <div class="item"><span class="k">Depois da garantia</span>Aí sim: tudo na sua oficina. A partir dos 20 mil o intervalo de válvulas abre para 20.000 km, e a moto fica barata de manter — basicamente óleo, filtros e corrente.</div>
+      <div class="item"><span class="k">Na viagem</span>Nada muda no plano: revisão dos 10 mil na autorizada antes de sair (com laudo de pneus e válvulas), óleo + filtro dos 15 mil feito por você em Ushuaia com nota guardada, e a dos 20 mil na volta — essa na autorizada, aproveitando para relatar qualquer sintoma que a estrada revelar, ainda dentro da garantia.</div>
+    </div>
+  </section>
+
+  <!-- ═══ PEÇAS ═══ -->
+  <section id="pecas">
+    <h2>Peças sobressalentes <small>o que levar — cabe num fundo de mala</small></h2>
+    <div class="card"><ul class="plain">
+      <li><b>Câmara de ar dianteira (21") e traseira (17")</b> — 1 de cada + kit remendo e cola</li>
+      <li><b>Espátulas de pneu</b> (2–3) + mini compressor 12 V ou bomba de pé compacta</li>
+      <li><b>Filtro de óleo original + anel de vedação</b> — para a troca dos 15 mil em Ushuaia (óleo 10W40 semissintético compra-se lá)</li>
+      <li><b>Vela reserva</b> (modelo original) + chave de vela</li>
+      <li><b>Limpa-contato elétrico</b> (spray pequeno) — o seguro contra o erro APS</li>
+      <li><b>Elo de emenda da corrente</b> (master link) compatível</li>
+      <li>Fusíveis sortidos + fita isolante + silver tape + arame recozido</li>
+      <li>Abraçadeiras plásticas de vários tamanhos</li>
+      <li>Lubrificante de corrente (aplicar dia sim, dia não) + escovinha</li>
+      <li>Kit ferramentas: chaves allen/torx da moto, chave do eixo traseiro (ajuste de corrente), alicate, canivete multiuso</li>
+      <li>Frasco pequeno de aditivo de radiador pronto + luvas descartáveis</li>
+      <li>Cabo de embreagem reserva (leve e barato — seguro de viagem mecânico)</li>
+    </ul></div>
+  </section>
+
+  <footer>km 0 — planejado em Palhoça · SC · roadbook do casal</footer>
+</div>
+</body>
+</html>

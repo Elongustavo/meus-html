@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organograma — Secretaria Municipal de Saúde de Palhoça</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#152420; --ink-2:#3a4a45; --mut:#6b7d77;
+    --page:#eef2f1; --card:#ffffff; --line:#d7e0dd;
+    --gestao:#0d3b34;
+    --atencao:#1f6feb; --vigilancia:#c07807; --farmacia:#7048e8; --apoio:#3f6b63;
+    --ok:#2f9e44; --warn:#c9770a;
+    --radius:14px; --shadow:0 1px 2px rgba(20,40,35,.06),0 6px 20px rgba(20,40,35,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink);
+    background:var(--page); line-height:1.5; -webkit-font-smoothing:antialiased;
+    padding:0 0 80px;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+
+  /* ---------- Toolbar ---------- */
+  .bar{
+    position:sticky;top:0;z-index:20;background:rgba(238,242,241,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  }
+  .bar .wrap{display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+  .prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2);font-weight:500}
+  .prog .track{width:120px;height:7px;border-radius:5px;background:#dbe4e1;overflow:hidden}
+  .prog .fill{height:100%;width:0;background:var(--ok);transition:width .35s ease}
+  .spacer{flex:1}
+  button.act{
+    font-family:'Inter';font-size:13px;font-weight:600;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--ink);
+    padding:8px 14px;border-radius:9px;transition:.15s;
+  }
+  button.act:hover{border-color:var(--gestao);color:var(--gestao)}
+  button.act.primary{background:var(--gestao);color:#fff;border-color:var(--gestao)}
+  button.act.primary:hover{filter:brightness(1.12)}
+
+  /* ---------- Header ---------- */
+  header.top{padding:34px 0 8px}
+  .eyebrow{font-family:'Archivo';font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    font-size:12px;color:var(--vigilancia)}
+  h1{font-family:'Archivo';font-weight:800;font-size:clamp(26px,4.4vw,40px);line-height:1.05;
+    margin:8px 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);max-width:64ch;font-size:15px}
+  .disc{margin-top:14px;font-size:12.5px;color:var(--mut);background:#fbfdfc;border:1px dashed var(--line);
+    border-radius:10px;padding:10px 13px;max-width:78ch}
+
+  /* ---------- Node: Secretário ---------- */
+  .spine{position:relative;padding-top:26px}
+  .node-top{
+    background:var(--gestao);color:#fff;border-radius:var(--radius);padding:20px 22px;
+    box-shadow:var(--shadow);max-width:560px;margin:0 auto;text-align:center;position:relative;
+  }
+  .node-top .role{font-family:'Archivo';font-weight:700;font-size:19px;letter-spacing:-.01em}
+  .node-top .place{font-size:12.5px;opacity:.82;margin-top:3px}
+  .node-top .fields{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left}
+  .node-top .field{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:7px 10px}
+  .node-top .flabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+  .node-top .fval{font-size:14px;font-weight:600;min-height:19px;outline:none}
+  .node-top .fval:empty::before{content:attr(data-ph);opacity:.5;font-weight:400}
+  .node-top .fval:focus{background:rgba(255,255,255,.14);border-radius:5px}
+
+  /* ---------- Eixo section ---------- */
+  .eixo{margin-top:34px}
+  .eixo-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .eixo-head .tab{width:12px;height:12px;border-radius:3px;background:var(--c)}
+  .eixo-head h2{font-family:'Archivo';font-weight:700;font-size:15px;letter-spacing:.06em;
+    text-transform:uppercase;margin:0;color:var(--ink)}
+  .eixo-head .cnt{font-size:12px;color:var(--mut);font-weight:500}
+  .eixo-head .rule{flex:1;height:1px;background:var(--line)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+
+  /* ---------- Coordination card ---------- */
+  .coord{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);
+    border-radius:var(--radius);padding:16px 17px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .coord h3{font-family:'Archivo';font-weight:700;font-size:16px;margin:0;letter-spacing:-.01em}
+  .coord .tag{font-size:11px;color:var(--c);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .contacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
+  .contacts .full{grid-column:1 / -1}
+  .cfield{border:1px solid var(--line);border-radius:9px;padding:6px 9px;background:#fbfdfc;min-width:0}
+  .cfield .flabel{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);font-weight:600}
+  .cfield .fval{font-size:13.5px;font-weight:600;color:var(--ink);min-height:19px;outline:none;
+    overflow-wrap:anywhere}
+  .cfield .fval:empty::before{content:attr(data-ph);color:#9fb0ab;font-weight:400}
+  .cfield:focus-within{border-color:var(--c);background:#fff}
+  .cfield.done{background:#f2f9f4;border-color:#bfe3c9}
+
+  .units{margin-top:12px;border-top:1px dashed var(--line);padding-top:11px}
+  .units .utitle{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600;margin-bottom:7px}
+  .u{display:flex;justify-content:space-between;gap:10px;font-size:12.8px;padding:3px 0;border-bottom:1px solid #f0f4f2}
+  .u:last-child{border-bottom:0}
+  .u .un{color:var(--ink-2);font-weight:500}
+  .u .up{color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .u .up.todo{color:var(--warn);font-style:italic}
+
+  footer{margin-top:40px;color:var(--mut);font-size:12px;text-align:center;border-top:1px solid var(--line);padding-top:18px}
+
+  @media(max-width:720px){
+    .grid{grid-template-columns:1fr}
+    .node-top .fields{grid-template-columns:1fr}
+    .bar .wrap{gap:8px}
+    .prog .track{width:84px}
+  }
+  @media print{
+    .bar{display:none}
+    body{background:#fff;padding:0}
+    .coord,.node-top{box-shadow:none}
+    .disc{display:none}
+    .eixo{break-inside:avoid}
+    .coord{break-inside:avoid}
+    .cfield{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="prog">
+      <span id="pcount">0/11</span> coordenações preenchidas
+      <span class="track"><span class="fill" id="pfill"></span></span>
+    </div>
+    <span class="spacer"></span>
+    <button class="act" onclick="window.print()">Imprimir / PDF</button>
+    <button class="act primary" onclick="baixar()">Baixar preenchido</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Prefeitura de Palhoça · SC</div>
+    <h1>Organograma da Secretaria Municipal de Saúde</h1>
+    <p class="sub">Painel de coordenações, contatos e unidades vinculadas. Clique em qualquer campo de <strong>coordenador(a), telefone ou e-mail</strong> para preencher. Use “Baixar preenchido” para guardar sua versão.</p>
+    <div class="disc">Estrutura de referência montada a partir das unidades mapeadas e do modelo típico de uma SMS. <strong>Ajuste os eixos e coordenações conforme o organograma oficial / Lei de estrutura administrativa vigente.</strong> Endereços e telefones das unidades vêm do Google Places/CNES e podem exigir conferência no cadastro municipal.</div>
+  </header>
+
+  <!-- TOPO -->
+  <div class="spine">
+    <div class="node-top">
+      <div class="role" contenteditable="true" data-ph="Secretário(a) Municipal de Saúde">Secretário(a) Municipal de Saúde</div>
+      <div class="place">SMS · Av. Atílio Pedro Pagani, 855 — Passa Vinte · (48) 3047-5564</div>
+      <div class="fields">
+        <div class="field"><div class="flabel">Nome</div><div class="fval track-fill" data-ph="preencher">—</div></div>
+        <div class="field"><div class="flabel">Contato direto / gabinete</div><div class="fval" data-ph="preencher">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EIXO: ATENÇÃO -->
+  <section class="eixo" style="--c:var(--atencao)">
+    <div class="eixo-head"><span class="tab"></span><h2>Atenção à Saúde</h2><span class="cnt">4 coordenações</span><span class="rule"></span></div>
+    <div class="grid">
+
+      <div class="coord" style="--c:var(--atencao)">
+        <div class="tag">Atenção Primária</div>
+        <h3>Coordenação de Atenção Básica (APS)</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">21 UBS vinculadas</div>
+          <div class="u"><span class="un">UBS Alto Aririú</span><span class="up">3047-5579</span></div>
+          <div class="u"><span class="un">UBS Aririú da Formiga</span><span class="up">3047-5594</span></div>
+          <div class="u"><span class="un">UBS Barra do Aririú</span><span class="up">3047-5593</span></div>
+          <div class="u"><span class="un">UBS Bela Vista</span><span class="up">3047-5578</span></div>
+          <div class="u"><span class="un">UBS Brejaru</span><span class="up">3047-5597</span></div>
+          <div class="u"><span class="un">UBS Cambirela (Furadinho)</span><span class="up">3047-5584</span></div>
+          <div class="u"><span class="un">UBS Central</span><span class="up">3047-5537</span></div>
+          <div class="u"><span class="un">UBS Enseada de Brito</span><span class="up">3047-5539</span></div>
+          <div class="u"><span class="un">UBS Frei Damião</span><span class="up">3047-5592</span></div>
+          <div class="u"><span class="un">UBS Guarda do Cubatão</span><span class="up">3047-5574</span></div>
+          <div class="u"><span class="un">UBS Jardim Eldorado</span><span class="up">3047-5583</span></div>
+          <div class="u"><span class="un">UBS Madri</span><span class="up">3047-5582</span></div>
+          <div class="u"><span class="un">UBS Médio Aririú</span><span class="up">3047-5544</span></div>
+          <div class="u"><span class="un">UBS Pachecos</span><span class="up">3047-5542</span></div>
+          <div class="u"><span class="un">UBS Passa Vinte</span><span class="up">3047-5541</span></div>
+          <div class="u"><span class="un">UBS Passagem do Maciambú</span><span class="up">3047-5596</span></div>
+          <div class="u"><span class="un">UBS Pinheira</span><span class="up">3047-5573</span></div>
+          <div class="u"><span class="un">UBS Ponte do Imaruim</span><span class="up">3047-5549</span></div>
+          <div class="u"><span class="un">UBS Rio Grande</span><span class="up">3047-5543</span></div>
+          <div class="u"><span class="un">UBS São Sebastião</span><span class="up">3047-5538</span></div>
+          <div class="u"><span class="un">UBS Vila Nova</span><span class="up">3047-5588</span></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--atencao)">
+        <div class="tag">Atenção Especializada</div>
+        <h3>Coordenação de Atenção Ambulatorial Especializada</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Unidades vinculadas</div>
+          <div class="u"><span class="un">Policlínica Municipal (UNISUL)</span><span class="up todo">conferir</span></div>
+          <div class="u"><span class="un">CEO — Centro de Especialidades Odontológicas</span><span class="up">3047-5533</span></div>
+          <div class="u"><span class="un">CEAP — Aconselhamento e Prevenção (IST/HIV/TB)</span><span class="up">3047-5547</span></div>
+          <div class="u"><span class="un">Laboratório Municipal</span><span class="up todo">conferir</span></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--atencao)">
+        <div class="tag">Urgência e Emergência</div>
+        <h3>Coordenação de Urgência e Emergência</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Unidades vinculadas</div>
+          <div class="u"><span class="un">UPA Centro / Bela Vista 24h</span><span class="up">3047-5581</span></div>
+          <div class="u"><span class="un">UPA Sul 24h (Pinheira)</span><span class="up">3047-5510</span></div>
+          <div class="u"><span class="un">SAMU — base Palhoça (verificar)</span><span class="up todo">conferir</span></div>
+          <div class="u"><span class="un">PA Pinheira (se ativo)</span><span class="up todo">conferir</span></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--atencao)">
+        <div class="tag">Saúde Mental (RAPS)</div>
+        <h3>Coordenação de Saúde Mental</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Unidades vinculadas</div>
+          <div class="u"><span class="un">CAPS II</span><span class="up">3047-5535</span></div>
+          <div class="u"><span class="un">CAPS Infantil (CAPSi)</span><span class="up">3047-5577</span></div>
+          <div class="u"><span class="un">CAPS AD (Álcool e Drogas)</span><span class="up">3047-5534</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EIXO: VIGILÂNCIA -->
+  <section class="eixo" style="--c:var(--vigilancia)">
+    <div class="eixo-head"><span class="tab"></span><h2>Vigilância em Saúde</h2><span class="cnt">1 diretoria · 4 vigilâncias</span><span class="rule"></span></div>
+    <div class="grid">
+      <div class="coord" style="--c:var(--vigilancia)">
+        <div class="tag">Diretoria</div>
+        <h3>Diretoria de Vigilância em Saúde</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Diretor(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Coordenações vinculadas — preencha os responsáveis</div>
+          <div class="u"><span class="un">Vig. Epidemiológica</span><span class="up todo">preencher</span></div>
+          <div class="u"><span class="un">Vig. Sanitária</span><span class="up todo">preencher</span></div>
+          <div class="u"><span class="un">Vig. Ambiental</span><span class="up todo">preencher</span></div>
+          <div class="u"><span class="un">Vig. em Saúde do Trabalhador</span><span class="up todo">preencher</span></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--vigilancia)">
+        <div class="tag">Coordenação</div>
+        <h3>Vigilância Ambiental</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Frentes</div>
+          <div class="u"><span class="un">Controle de zoonoses / vetores</span><span class="up"></span></div>
+          <div class="u"><span class="un">Qualidade da água / VIGIAGUA</span><span class="up"></span></div>
+          <div class="u"><span class="un">Fiscalização ambiental em saúde</span><span class="up"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EIXO: FARMÁCIA -->
+  <section class="eixo" style="--c:var(--farmacia)">
+    <div class="eixo-head"><span class="tab"></span><h2>Assistência Farmacêutica</h2><span class="cnt">1 coordenação</span><span class="rule"></span></div>
+    <div class="grid">
+      <div class="coord" style="--c:var(--farmacia)">
+        <div class="tag">Coordenação</div>
+        <h3>Coordenação de Assistência Farmacêutica</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Unidades vinculadas</div>
+          <div class="u"><span class="un">Farmácia de Alto Custo (CEAF) — R. Cel. Bernardino Machado, 290</span><span class="up">3047-5540</span></div>
+          <div class="u"><span class="un">Farmácia Básica (dispensação nas UBS)</span><span class="up"></span></div>
+          <div class="u"><span class="un">CAF — Central de Abastecimento Farmacêutico</span><span class="up todo">conferir</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EIXO: GESTÃO E APOIO -->
+  <section class="eixo" style="--c:var(--apoio)">
+    <div class="eixo-head"><span class="tab"></span><h2>Gestão e Apoio Logístico</h2><span class="cnt">4 coordenações</span><span class="rule"></span></div>
+    <div class="grid">
+
+      <div class="coord" style="--c:var(--apoio)">
+        <div class="tag">Apoio logístico</div>
+        <h3>Almoxarifado da Saúde</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Responsável</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">Endereço</div><div class="fval" data-ph="preencher — não localizado na web"></div></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--apoio)">
+        <div class="tag">Apoio logístico</div>
+        <h3>Setor de Transporte da Saúde</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Responsável</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">Endereço / garagem</div><div class="fval" data-ph="preencher — não localizado na web"></div></div>
+        </div>
+        <div class="units">
+          <div class="utitle">Frota</div>
+          <div class="u"><span class="un">Transporte sanitário eletivo (TFD/consultas)</span><span class="up"></span></div>
+          <div class="u"><span class="un">Ambulâncias de apoio / remoção</span><span class="up"></span></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--apoio)">
+        <div class="tag">Gestão</div>
+        <h3>Regulação, Controle e Avaliação</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+      </div>
+
+      <div class="coord" style="--c:var(--apoio)">
+        <div class="tag">Gestão</div>
+        <h3>Gestão do Trabalho e Educação na Saúde</h3>
+        <div class="contacts">
+          <div class="cfield"><div class="flabel">Coordenador(a)</div><div class="fval coordname" data-ph="preencher"></div></div>
+          <div class="cfield"><div class="flabel">Telefone / ramal</div><div class="fval" data-ph="preencher"></div></div>
+          <div class="cfield full"><div class="flabel">E-mail</div><div class="fval" data-ph="preencher"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    Gerado como ferramenta de trabalho interna · Palhoça/SC · atualize conforme o cadastro oficial da SMS.
+  </footer>
+</div>
+
+<script src="assets/sync.js"></script>
+<script>
+  // Torna os campos de valor editáveis
+  document.querySelectorAll('.fval').forEach(function(el){
+    if(!el.hasAttribute('contenteditable')) el.setAttribute('contenteditable','true');
+    if(el.textContent.trim()==='—') el.textContent='';
+    el.addEventListener('input', refresh);
+    el.addEventListener('blur', function(){ el.textContent = el.textContent.trim(); refresh(); });
+  });
+
+  function refresh(){
+    // marca campos preenchidos
+    document.querySelectorAll('.cfield').forEach(function(f){
+      var v=f.querySelector('.fval');
+      f.classList.toggle('done', v && v.textContent.trim().length>0);
+    });
+    // progresso = coordenações com nome do responsável preenchido
+    var names=document.querySelectorAll('.coordname');
+    var filled=0; names.forEach(function(n){ if(n.textContent.trim().length>0) filled++; });
+    var total=names.length;
+    document.getElementById('pcount').textContent=filled+'/'+total;
+    document.getElementById('pfill').style.width=(total? (filled/total*100):0)+'%';
+  }
+
+  function baixar(){
+    document.querySelectorAll('.fval').forEach(function(el){ el.textContent=el.textContent.trim(); });
+    var clone=document.documentElement.cloneNode(true);
+    var s=clone.querySelector('script'); if(s) s.remove(); // versão baixada fica estática/limpa
+    var html='<!DOCTYPE html>\n'+clone.outerHTML;
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='Organograma_Saude_Palhoca_preenchido.html';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  refresh();
+
+  /* ---- sincronização entre aparelhos ---- */
+  (function(){
+    var campos=[].slice.call(document.querySelectorAll('.fval'));
+    campos.forEach(function(el,i){ el.setAttribute('data-idx', i); });
+    function coletar(){ var o={}; campos.forEach(function(el,i){ var v=el.textContent.trim(); if(v) o[i]=v; }); return o; }
+
+    var bar=document.createElement('div');
+    bar.style.cssText='position:fixed;left:0;right:0;bottom:0;text-align:center;font:12px/1.4 ui-monospace,monospace;padding:8px 12px;background:rgba(255,255,255,.96);border-top:1px solid rgba(0,0,0,.1);cursor:pointer;z-index:9999';
+    bar.textContent='Carregando…';
+    document.body.appendChild(bar);
+    var cores={ok:'#1E7A46',aviso:'#B98A00',erro:'#C0392B',salvando:'#B98A00'};
+    SiteSync.init({page:'saude-organograma',onStatus:function(t,c){bar.textContent=t;bar.style.color=cores[c]||'#555';}});
+    bar.addEventListener('click',function(){ if(!SiteSync.hasToken()) SiteSync.askToken(); });
+
+    campos.forEach(function(el){ el.addEventListener('input',function(){ SiteSync.save(coletar()); }); });
+
+    SiteSync.load().then(function(d){
+      if(d){ campos.forEach(function(el,i){ if(d[i]!=null) el.textContent=d[i]; }); refresh(); }
+      if(!SiteSync.hasToken()) bar.textContent='Toque aqui para ativar a sincronização entre aparelhos.';
+    });
+  })();
+</script>
+</body>
+</html>
