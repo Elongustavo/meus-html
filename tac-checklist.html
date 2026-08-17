@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificação TAC Transparência — Câmara Municipal de Palhoça</title>
+<style>
+  :root{
+    --paper:#FAF9F5; --ink:#17253B; --ink-soft:#4A5568;
+    --verde:#1E7A46; --verde-pale:#E3F1E8;
+    --verm:#C0392B; --verm-pale:#FBE9E6;
+    --ambar:#B98A00; --ambar-pale:#FFF6DC;
+    --cinza:#8A93A0; --cinza-pale:#EEF0F3;
+    --linha:#D8DCE2; --azul:#1D4E89;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:15px;line-height:1.45;padding-bottom:90px}
+
+  /* Cabeçalho estilo ofício */
+  header{background:var(--ink);color:#F5F3EC;padding:18px 16px 14px;
+    border-bottom:4px double #C9A227}
+  header .orgao{font-family:Georgia,'Times New Roman',serif;font-size:12px;
+    letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  header h1{font-family:Georgia,'Times New Roman',serif;font-size:21px;
+    font-weight:700;margin-top:4px;line-height:1.2}
+  header .ic{font-size:12px;margin-top:6px;opacity:.75;font-variant-numeric:tabular-nums}
+
+  /* Painel de progresso */
+  .painel{position:sticky;top:0;z-index:20;background:#FFFFFF;
+    border-bottom:1px solid var(--linha);padding:10px 16px;
+    box-shadow:0 2px 8px rgba(23,37,59,.08)}
+  .barra{height:8px;background:var(--cinza-pale);border-radius:4px;overflow:hidden;display:flex}
+  .barra span{height:100%;transition:width .3s}
+  .b-sim{background:var(--verde)} .b-nao{background:var(--verm)}
+  .b-parcial{background:var(--ambar)} .b-na{background:var(--cinza)}
+  .contadores{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .cont{font-size:12px;padding:3px 9px;border-radius:20px;border:1px solid var(--linha);
+    background:#fff;font-variant-numeric:tabular-nums;cursor:pointer;user-select:none}
+  .cont b{margin-left:3px}
+  .cont.ativo{outline:2px solid var(--azul);outline-offset:1px}
+  .cont.c-sim{background:var(--verde-pale);border-color:var(--verde);color:var(--verde)}
+  .cont.c-nao{background:var(--verm-pale);border-color:var(--verm);color:var(--verm)}
+  .cont.c-parcial{background:var(--ambar-pale);border-color:var(--ambar);color:var(--ambar)}
+  .cont.c-na{background:var(--cinza-pale);color:var(--ink-soft)}
+  .cont.c-pend{background:#fff;color:var(--ink-soft)}
+
+  /* Filtros */
+  .filtros{padding:12px 16px 4px;display:flex;flex-direction:column;gap:8px}
+  .filtros input[type=search],.filtros select{
+    width:100%;padding:10px 12px;border:1px solid var(--linha);border-radius:8px;
+    font-size:15px;background:#fff;color:var(--ink)}
+  .linha-filtros{display:flex;gap:8px}
+  .linha-filtros select{flex:1}
+  .chk-mpsc{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-soft)}
+  .chk-mpsc input{width:18px;height:18px;accent-color:var(--verm)}
+
+  /* Cartões de item */
+  main{padding:8px 12px}
+  .grupo-titulo{font-family:Georgia,serif;font-size:13px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-soft);margin:18px 4px 8px;
+    border-bottom:1px solid var(--linha);padding-bottom:4px}
+  .item{background:#fff;border:1px solid var(--linha);border-radius:10px;
+    padding:12px 14px;margin-bottom:10px;position:relative}
+  .item.faltante{background:var(--ambar-pale);border-style:dashed}
+  .item .topo{display:flex;gap:10px;align-items:baseline}
+  .item .num{font-family:Georgia,serif;font-weight:700;font-size:18px;color:var(--azul);
+    min-width:30px;font-variant-numeric:tabular-nums}
+  .item .texto{flex:1;font-size:14.5px}
+  .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:4px;background:var(--cinza-pale);
+    color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .tag.mpsc-nao{background:var(--verm-pale);color:var(--verm);font-weight:600}
+  .tag.mpsc-sim{background:var(--verde-pale);color:var(--verde)}
+  .obs-mpsc{font-size:12.5px;color:var(--verm);margin-top:6px;font-style:italic}
+  .lei{margin-top:8px;border:1px solid var(--linha);border-radius:8px;background:#FCFBF7;overflow:hidden}
+  .lei summary{cursor:pointer;padding:8px 11px;font-size:12.5px;color:var(--azul);
+    font-weight:600;list-style:none;user-select:none}
+  .lei summary::-webkit-details-marker{display:none}
+  .lei[open] summary{border-bottom:1px solid var(--linha)}
+  .lei p{font-size:12.5px;line-height:1.5;color:var(--ink);padding:8px 11px 2px;margin:0}
+  .lei p:last-child{padding-bottom:10px}
+
+  /* Botões de status — o carimbo */
+  .status-btns{display:flex;gap:6px;margin-top:10px}
+  .sbtn{flex:1;padding:9px 0;border:1.5px solid var(--linha);border-radius:8px;
+    background:#fff;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;
+    transition:all .12s}
+  .sbtn:active{transform:scale(.96)}
+  .item[data-st="Sim"] .sbtn[data-v="Sim"]{background:var(--verde);border-color:var(--verde);color:#fff}
+  .item[data-st="Não"] .sbtn[data-v="Não"]{background:var(--verm);border-color:var(--verm);color:#fff}
+  .item[data-st="Parcial"] .sbtn[data-v="Parcial"]{background:var(--ambar);border-color:var(--ambar);color:#fff}
+  .item[data-st="N/A"] .sbtn[data-v="N/A"]{background:var(--cinza);border-color:var(--cinza);color:#fff}
+  .item[data-st="Sim"]{border-left:5px solid var(--verde)}
+  .item[data-st="Não"]{border-left:5px solid var(--verm)}
+  .item[data-st="Parcial"]{border-left:5px solid var(--ambar)}
+  .item[data-st="N/A"]{border-left:5px solid var(--cinza)}
+
+  .carimbo{position:absolute;top:8px;right:10px;font-family:Georgia,serif;
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    border:1.5px solid;border-radius:3px;padding:1px 6px;transform:rotate(-4deg);
+    opacity:0;transition:opacity .2s;pointer-events:none}
+  .item[data-st="Sim"] .carimbo{opacity:.9;color:var(--verde);border-color:var(--verde)}
+  .item[data-st="Não"] .carimbo{opacity:.9;color:var(--verm);border-color:var(--verm)}
+  .item[data-st="Sim"] .carimbo::after{content:"Cumpre"}
+  .item[data-st="Não"] .carimbo::after{content:"Não cumpre"}
+
+  /* Campo de link sempre visível */
+  .link-linha{display:flex;gap:6px;margin-top:8px;align-items:center}
+  .link-linha input{flex:1;padding:9px 11px;border:1px solid var(--linha);border-radius:8px;
+    font-size:13.5px;background:#FDFDFB;color:var(--ink);min-width:0}
+  .link-linha input:focus{outline:2px solid var(--azul);outline-offset:-1px;border-color:var(--azul)}
+  .btn-abrir{padding:9px 12px;border:1px solid var(--azul);border-radius:8px;background:#fff;
+    color:var(--azul);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;
+    white-space:nowrap}
+  .btn-abrir[hidden]{display:none}
+
+  .detalhes{margin-top:10px;display:none}
+  .item.aberto .detalhes{display:block}
+  .detalhes textarea{width:100%;border:1px solid var(--linha);border-radius:8px;
+    padding:8px 10px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:52px;
+    background:#FDFDFB}
+  .detalhes label{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;
+    letter-spacing:.06em;display:block;margin:8px 0 3px}
+  .data-verif{font-size:12px;color:var(--ink-soft);margin-top:6px;font-variant-numeric:tabular-nums}
+  .toggle-det{font-size:12.5px;color:var(--azul);background:none;border:none;
+    margin-top:8px;cursor:pointer;padding:4px 0;text-decoration:underline}
+
+  /* Rodapé de ações */
+  .acoes{position:fixed;bottom:0;left:0;right:0;background:#fff;
+    border-top:1px solid var(--linha);padding:10px 16px;display:flex;gap:8px;z-index:30;
+    box-shadow:0 -2px 10px rgba(23,37,59,.08)}
+  .acoes button{flex:1;padding:11px 0;border-radius:8px;border:1px solid var(--linha);
+    background:#fff;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer}
+  .acoes .primario{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .aviso-persistencia{font-size:11.5px;color:var(--verde);text-align:center;
+    padding:6px 16px;background:var(--verde-pale);transition:background .3s,color .3s}
+  .aviso-persistencia.salvando{color:var(--ambar);background:var(--ambar-pale)}
+  .aviso-persistencia.erro{color:var(--verm);background:var(--verm-pale)}
+  .vazio{text-align:center;color:var(--ink-soft);padding:40px 16px;font-style:italic}
+  input[type=file]{display:none}
+  @media(min-width:760px){
+    main{max-width:820px;margin:0 auto}
+    .painel,.filtros{max-width:820px;margin-left:auto;margin-right:auto}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="orgao">Câmara Municipal de Palhoça · Estado de Santa Catarina</div>
+  <h1>Verificação do TAC da Transparência</h1>
+  <div class="ic">Inquérito Civil n. 06.2015.00003219-4 · 2ª Promotoria de Justiça de Palhoça · 83 itens</div>
+</header>
+
+<div class="aviso-persistencia" id="statusSalvo">Salvamento automático ativo — preencha à vontade e feche quando quiser.</div>
+
+<div class="painel">
+  <div class="barra" id="barra"></div>
+  <div class="contadores" id="contadores"></div>
+</div>
+
+<div class="filtros">
+  <input type="search" id="busca" placeholder="Buscar item, cláusula ou setor…">
+  <div class="linha-filtros">
+    <select id="fSetor"><option value="">Todos os setores</option></select>
+    <select id="fClausula"><option value="">Todas as cláusulas</option></select>
+  </div>
+  <label class="chk-mpsc"><input type="checkbox" id="fMpscNao"> Mostrar só os "Não" da última avaliação do MPSC (17 itens)</label>
+</div>
+
+<main id="lista"></main>
+
+<div class="acoes">
+  <button id="btnCSV" class="primario">Exportar CSV (para anexar em CI / MP)</button>
+</div>
+
+<script src="assets/sync.js"></script>
+<script>
+const LIM = "Limitação de caracteres — informação muitas vezes incompleta";
+
+// Texto oficial dos dispositivos (Planalto). Chave = referência normalizada.
+const LEIS = {
+"LAI 8 caput":"Lei 12.527/11, art. 8º — É dever dos órgãos e entidades públicas promover, independentemente de requerimentos, a divulgação em local de fácil acesso, no âmbito de suas competências, de informações de interesse coletivo ou geral por eles produzidas ou custodiadas.",
+"LAI 8 §1 I":"Lei 12.527/11, art. 8º, § 1º, I — Na divulgação das informações a que se refere o caput, deverão constar, no mínimo: I - registro das competências e estrutura organizacional, endereços e telefones das respectivas unidades e horários de atendimento ao público.",
+"LAI 8 §1 II":"Lei 12.527/11, art. 8º, § 1º, II — registros de quaisquer repasses ou transferências de recursos financeiros.",
+"LAI 8 §1 III":"Lei 12.527/11, art. 8º, § 1º, III — registros das despesas.",
+"LAI 8 §1 IV":"Lei 12.527/11, art. 8º, § 1º, IV — informações concernentes a procedimentos licitatórios, inclusive os respectivos editais e resultados, bem como a todos os contratos celebrados.",
+"LAI 8 §1 VI":"Lei 12.527/11, art. 8º, § 1º, VI — respostas a perguntas mais frequentes da sociedade.",
+"LAI 8 §3 I":"Lei 12.527/11, art. 8º, § 3º, I — conter ferramenta de pesquisa de conteúdo que permita o acesso à informação de forma objetiva, transparente, clara e em linguagem de fácil compreensão.",
+"LAI 8 §3 II":"Lei 12.527/11, art. 8º, § 3º, II — possibilitar a gravação de relatórios em diversos formatos eletrônicos, inclusive abertos e não proprietários, tais como planilhas e texto, de modo a facilitar a análise das informações.",
+"LAI 8 §3 VII":"Lei 12.527/11, art. 8º, § 3º, VII — indicar local e instruções que permitam ao interessado comunicar-se, por via eletrônica ou telefônica, com o órgão ou entidade detentora do sítio.",
+"LAI 8 §3 VIII":"Lei 12.527/11, art. 8º, § 3º, VIII — adotar as medidas necessárias para garantir a acessibilidade de conteúdo para pessoas com deficiência, nos termos do art. 17 da Lei nº 10.098/2000 e do art. 9º da Convenção sobre os Direitos das Pessoas com Deficiência (Decreto Legislativo nº 186/2008).",
+"LAI 10 §2":"Lei 12.527/11, art. 10, § 2º — Os órgãos e entidades do poder público devem viabilizar alternativa de encaminhamento de pedidos de acesso por meio de seus sítios oficiais na internet.",
+"LAI 4 IX":"Lei 12.527/11, art. 4º, IX — primariedade: qualidade da informação coletada na fonte, com o máximo de detalhamento possível, sem modificações.",
+"LAI 7 VI":"Lei 12.527/11, art. 7º, VI — O acesso à informação compreende, entre outros, o direito de obter informação pertinente à administração do patrimônio público, utilização de recursos públicos, licitação, contratos administrativos.",
+"LC101 48 caput":"LC 101/00, art. 48, caput — São instrumentos de transparência da gestão fiscal, aos quais será dada ampla divulgação, inclusive em meios eletrônicos de acesso público: os planos, orçamentos e leis de diretrizes orçamentárias; as prestações de contas e o respectivo parecer prévio; o Relatório Resumido da Execução Orçamentária e o Relatório de Gestão Fiscal; e as versões simplificadas desses documentos.",
+"LC101 48A I":"LC 101/00, art. 48-A, I — quanto à despesa: todos os atos praticados pelas unidades gestoras no decorrer da execução da despesa, no momento de sua realização, com a disponibilização mínima dos dados referentes ao número do correspondente processo, ao bem fornecido ou ao serviço prestado, à pessoa física ou jurídica beneficiária do pagamento e, quando for o caso, ao procedimento licitatório realizado.",
+"LC101 54":"LC 101/00, art. 54 — Ao final de cada quadrimestre será emitido pelos titulares dos Poderes e órgãos referidos no art. 20 Relatório de Gestão Fiscal, assinado pelas autoridades ali indicadas.",
+"LC101 56":"LC 101/00, art. 56 — As contas prestadas pelos Chefes do Poder Executivo incluirão, além das suas próprias, as dos Presidentes dos órgãos dos Poderes Legislativo e Judiciário e do Chefe do Ministério Público, referidos no art. 20, as quais receberão parecer prévio, separadamente, do respectivo Tribunal de Contas."
+};
+
+// Mapa: nº do item -> chave(s) em LEIS
+const REFS = {
+1:["LAI 8 §1 I"],2:["LAI 8 §1 I"],3:["LAI 8 §1 I"],4:["LAI 8 §1 I"],5:["LAI 8 §1 II"],
+6:["LC101 48A I"],7:["LC101 48 caput","LC101 54"],8:["LC101 48 caput","LC101 56"],9:["LC101 48 caput","LC101 56"],
+10:["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"],11:["LC101 48 caput"]
+};
+for(let n=12;n<=21;n++) REFS[n]=["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"];
+for(let n=22;n<=57;n++) REFS[n]=["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"];
+REFS[58]=["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"];
+REFS[59]=["LAI 8 §1 III"];REFS[60]=["LAI 8 §1 III"];
+for(let n=61;n<=73;n++) REFS[n]=["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"];
+REFS[74]=["LAI 8 §1 IV"];REFS[75]=["LAI 8 §1 III","LAI 4 IX","LAI 7 VI"];REFS[76]=["LAI 8 §1 IV"];
+REFS[77]=["LAI 8 §3 I"];REFS[78]=["LAI 8 §3 II"];
+REFS[79]=["LAI 10 §2"];REFS[80]=["LAI 8 §3 VIII"];REFS[81]=["LAI 8 §1 VI"];REFS[82]=["LAI 8 §3 VII"];
+REFS[83]=["LAI 8 caput","LAI 4 IX","LAI 7 VI"];
+
+function textoLegal(n){
+  const chaves = REFS[n]||[];
+  return chaves.map(k=>LEIS[k]).filter(Boolean);
+}
+
+// [nº, item, cláusula, setor, avaliação MPSC, observação MPSC]
+const ITENS = [
+[1,"São divulgadas as competências dos órgãos administrativos?","3.1","Diretoria Geral / Jurídico","Não",""],
+[2,"É divulgada a estrutura organizacional?","3.1","Diretoria Geral","Sim",""],
+[3,"São divulgados os endereços e telefones das respectivas unidades?","3.1","Diretoria Geral","Sim",""],
+[4,"É divulgado o horário de atendimento ao público?","3.1","Diretoria Geral","Sim",""],
+[5,"São divulgados os repasses ou transferências de recursos financeiros?","3.2","Contabilidade","Sim",""],
+[6,"São divulgados os atos das unidades gestoras na execução da despesa (nº do processo, bem/serviço, beneficiário, licitação)?","3.3","Contabilidade","Sim",""],
+[7,"São divulgados os Relatórios de Gestão Fiscal (RGF)?","3.4","Contabilidade","Sim",""],
+[8,"São divulgadas as prestações de contas anuais?","3.5","Contabilidade","Não",""],
+[9,"São divulgados os resultados de inspeções, auditorias, prestações e tomadas de contas (controle interno e externo)?","3.5","Contabilidade / Controle Interno","Sim",""],
+[10,"São divulgados os decretos legislativos referentes aos julgamentos das contas anuais do Prefeito?","3.6","Controle Interno / Coord. Legislativa","Sim",""],
+[11,"São divulgados os PPA, LOA e LDO?","3.7","Contabilidade","Sim",""],
+[12,"É divulgado detalhamento do quadro de pessoal, plano de carreira e remuneração dos cargos e empregos públicos?","4.1.k","Recursos Humanos","Sim",""],
+[13,"Relação de servidores efetivos com identificação do exercício financeiro correspondente?","4.1.a","Recursos Humanos","Sim",""],
+[14,"Relação de servidores efetivos contendo o nome completo?","4.1.b","RH / TI (portal)","Não",LIM],
+[15,"Relação de servidores efetivos contendo o número de matrícula?","4.1.c","Recursos Humanos","Sim",""],
+[16,"Relação de servidores efetivos com cargo/função e categoria, com legislação regulamentadora?","4.1.d/e","Recursos Humanos","Sim",""],
+[17,"Relação de servidores efetivos com data de admissão/ingresso e espécie de contratação?","4.1.f","RH / TI (portal)","Não",LIM],
+[18,"Relação de servidores efetivos com tipo de vínculo (celetista ou estatutário)?","4.1.g","Recursos Humanos","Sim",""],
+[19,"Relação de servidores efetivos com carga horária?","4.1.h","Recursos Humanos","Sim",""],
+[20,"Relação de servidores efetivos com lotação (secretaria/departamento/setor)?","4.1.i","RH / TI (portal)","Não",LIM],
+[21,"São divulgados vencimentos, vantagens, subsídios, proventos, gratificações, horas extras e encargos previdenciários?","4.1.j","RH / Contabilidade","Sim",""],
+[22,"Diárias/ajudas de custo: nome completo do agente e matrícula?","4.2.a","Financeiro","Sim",""],
+[23,"Diárias/ajudas de custo: justificativa de cada viagem?","4.2.b","Financeiro","Sim",""],
+[24,"Diárias/ajudas de custo: datas de início e término das viagens?","4.2.c","Financeiro","Sim",""],
+[25,"Diárias/ajudas de custo: destino de cada viagem?","4.2.d","Financeiro","Sim",""],
+[26,"Diárias/ajudas de custo: meio de transporte e respectivo custo?","4.2.e","Financeiro","Sim",""],
+[27,"Diárias/ajudas de custo: valores de passagens rodoviárias/aéreas ou ressarcimento de combustível?","4.2.f","Financeiro","Não",""],
+[28,"Diárias/ajudas de custo: quantidade de diárias pagas por viagem?","4.2.g","Financeiro","Sim",""],
+[29,"Diárias/ajudas de custo: valor unitário das diárias?","4.2.g","Financeiro","Sim",""],
+[30,"Relação de servidores inativos com nome completo?","4.3.a","Recursos Humanos","Sim",""],
+[31,"Relação de servidores inativos com número de matrícula?","4.3.b","Recursos Humanos","Sim",""],
+[32,"Relação de inativos identificando o cargo em que se deu a aposentadoria?","4.3.c","Recursos Humanos","Não",""],
+[33,"Relação de inativos com data de ingresso no quadro de inativos?","4.3.d","Recursos Humanos","Não","Arquivo com texto 'em breve estará disponibilizada essa informação'"],
+[34,"Relação de inativos com regime (geral ou próprio) de aposentadoria?","4.3.e","Recursos Humanos","Não","Constam números (14, 15, 17, 18) sem associação com regimes previdenciários"],
+[35,"Relação de comissionados com nome completo?","4.4.a","Recursos Humanos","Sim",""],
+[36,"Relação de comissionados com número de matrícula?","4.4.a","Recursos Humanos","Sim",""],
+[37,"Comissionados: data de nomeação/admissão e número do respectivo ato?","4.4.b","Recursos Humanos","Não",""],
+[38,"Comissionados: data de exoneração e número do respectivo ato?","4.4.c","Recursos Humanos","Não",""],
+[39,"Comissionados: identificação da categoria e indicação do número da lei respectiva?","4.4.d","Recursos Humanos","Sim",""],
+[40,"Comissionados: indicação da existência de vínculo efetivo, quando houver?","4.4.e","Recursos Humanos","Não",""],
+[41,"Comissionados: identificação da carga horária?","4.4.f","Recursos Humanos","Sim",""],
+[42,"Comissionados: identificação da lotação (secretaria/departamento/setor)?","4.4.g","RH / TI (portal)","Não",LIM],
+[43,"Comissionados: atribuições (direção/chefia/assessoramento) e legislação regulamentadora?","4.4.h","RH / TI (portal)","Não",LIM],
+[44,"Servidores cedidos/recebidos em cessão: nome completo?","4.5.a","RH / TI (portal)","Não",LIM],
+[45,"Cedidos/recebidos: número de matrícula?","4.5.b","Recursos Humanos","Sim",""],
+[46,"Cedidos/recebidos: cargo e categoria, com legislação regulamentadora?","4.5.c","Recursos Humanos","Sim",""],
+[47,"Cedidos/recebidos: tipo de vínculo?","4.5.d","Recursos Humanos","Sim",""],
+[48,"Cedidos/recebidos: carga horária?","4.5.e","Recursos Humanos","Sim",""],
+[49,"Cedidos/recebidos: número do ato de cessão?","4.5.f","Recursos Humanos","Sim",""],
+[50,"Cedidos/recebidos: identificação do órgão de origem e do órgão de destino?","4.5.g","Recursos Humanos","Sim",""],
+[51,"Cedidos/recebidos: identificação se o ônus é para a origem ou para o destino?","4.5.h","Recursos Humanos","Sim",""],
+[52,"Cedidos/recebidos: prazo da cessão?","4.5.i","Recursos Humanos","Sim",""],
+[53,"Cedidos/recebidos: identificação da lotação (secretaria/departamento/setor)?","4.5.j","RH / TI (portal)","Não",LIM],
+[54,"Relação de estagiários com nome completo?","4.6.a","Recursos Humanos","Sim",""],
+[55,"Relação de estagiários com data de admissão?","4.6.b","Recursos Humanos","Sim",""],
+[56,"Relação de estagiários com identificação do curso vinculado ao estágio?","4.6.c","Recursos Humanos","Sim",""],
+[57,"Relação de estagiários com respectiva lotação (secretaria/departamento/setor)?","4.6.d","Recursos Humanos","Sim",""],
+];
+ITENS.push(
+[58,"É divulgada relação de estagiários identificando a respectiva carga horária?","4.6.f","Recursos Humanos","Sim",""],
+[59,"É divulgada relação de agentes públicos contratados temporariamente?","4.7","Recursos Humanos","Sim",""],
+[60,"É divulgada relação de agentes públicos vinculados a contrato de terceirização?","4.7","Recursos Humanos / Licitações","Sim",""],
+[61,"Convênios e contratos com particulares: identificação dos respectivos números e do exercício financeiro?","5.1.a","Licitações / Contratos","Sim",""],
+[62,"Convênios e contratos com particulares: identificação dos respectivos objetos?","5.1.b","Licitações / Contratos","Sim",""],
+[63,"Convênios e contratos com particulares: identificação da espécie dos contratos?","5.1.c","Licitações / Contratos","Sim",""],
+[64,"Convênios e contratos com particulares: previsão orçamentária e descrição detalhada do órgão, unidade e rubrica?","5.1.d","Licitações / Contratos","Sim",""],
+[65,"Convênios e contratos com particulares: indicação dos respectivos valores?","5.1.e","Licitações / Contratos","Sim",""],
+[66,"Convênios e contratos com particulares: identificação dos contratados/signatários (pessoa física ou jurídica) e do respectivo CNPJ?","5.1.f","Licitações / Contratos","Sim",""],
+[67,"Convênios e contratos com particulares: publicação de extratos de eventuais termos aditivos?","5.1.g","Licitações / Contratos","Sim",""],
+[68,"Procedimentos licitatórios (inclusive dispensa e inexigibilidade): número dos respectivos processos e exercício financeiro?","5.2.a/b","Licitações","Sim",""],
+[69,"Procedimentos licitatórios: identificação da modalidade adotada?","5.2.c","Licitações","Sim",""],
+[70,"Procedimentos licitatórios: identificação do respectivo objeto?","5.2.d","Licitações","Sim",""],
+[71,"Procedimentos licitatórios: identificação do respectivo critério de julgamento?","5.2.e","Licitações","Sim",""],
+[72,"Procedimentos licitatórios: identificação da sua vigência?","5.2.f","Licitações","Sim",""],
+[73,"Procedimentos licitatórios: previsão orçamentária e descrição detalhada do órgão, unidade e rubrica?","5.2.g","Licitações","Sim",""],
+[74,"Procedimentos licitatórios: identificação do respectivo valor?","5.2.h","Licitações","Sim",""],
+[75,"Procedimentos licitatórios: identificação dos contratados/signatários (pessoa física ou jurídica) e do respectivo CNPJ?","5.2.i","Licitações","Sim",""],
+[76,"É disponibilizada a íntegra do edital de licitação e do contrato?","5.2","Licitações","Sim",""],
+[77,"É disponibilizada ferramenta de pesquisa avançada de conteúdo?","6.1","TI","Sim",""],
+[78,"É disponibilizado mecanismo que permita a gravação de relatórios em diversos formatos eletrônicos, tais como planilhas e textos?","6.2","TI","Sim",""]);
+ITENS.push(
+[79,"É disponibilizada alternativa de encaminhamento de pedido de acesso à informação por parte dos cidadãos?","8","Diretoria Geral / TI","Sim",""],
+[80,"São adotadas medidas para garantir a acessibilidade de conteúdo para pessoas com deficiência?","9","TI / Comunicação","Sim",""],
+[81,"São disponibilizadas respostas às perguntas mais frequentes da sociedade?","10","Diretoria Geral / Comunicação","Sim",""],
+[82,"Há instruções para o interessado comunicar-se, por via eletrônica ou telefônica, com o órgão detentor do sítio?","10","Diretoria Geral / Comunicação","Sim",""],
+[83,"São disponibilizadas, em tempo real, as peças principais dos processos legislativos: texto do projeto, exposição de motivos e atas das comissões e sessões deliberativas?","13","Coordenadoria Legislativa","Não","Processo TCE @DEN-17/00082580"]);
+
+const GRUPOS = [
+ [1,11,"Cláusula 3 — Informações institucionais e fiscais"],
+ [12,21,"Cláusula 4.1 — Quadro funcional (servidores efetivos)"],
+ [22,29,"Cláusula 4.2 — Diárias e ajudas de custo"],
+ [30,34,"Cláusula 4.3 — Servidores inativos e pensionistas"],
+ [35,43,"Cláusula 4.4 — Cargos em comissão"],
+ [44,53,"Cláusula 4.5 — Servidores cedidos e recebidos"],
+ [54,57,"Cláusula 4.6 — Estagiários"],
+ [58,60,"Cláusula 4.6–4.7 — Estagiários, temporários e terceirizados"],
+ [61,67,"Cláusula 5.1 — Convênios e contratos com particulares"],
+ [68,76,"Cláusula 5.2 — Procedimentos licitatórios"],
+ [77,78,"Cláusula 6 — Ferramentas de pesquisa e exportação"],
+ [79,83,"Cláusulas finais — SIC, acessibilidade e processo legislativo"]];
+
+// estado
+const estado = {};
+ITENS.forEach(i=>{estado[i[0]]={st:"Pendente",ev:"",obs:"",data:""}});
+
+// ---- Salvamento automático (armazenamento persistente do app) ----
+const CHAVE = "tac_verificacao_v1";
+let _timer=null, _statusEl=null;
+function marcarStatus(txt,cls){
+  if(!_statusEl) _statusEl=document.getElementById("statusSalvo");
+  if(!_statusEl) return;
+  _statusEl.textContent=txt;
+  _statusEl.className="aviso-persistencia"+(cls?" "+cls:"");
+}
+SiteSync.init({page:"tac", onStatus:(txt,cls)=>{
+  marcarStatus(txt, cls==="salvando"?"salvando":(cls==="erro"?"erro":""));
+}});
+document.addEventListener("DOMContentLoaded",()=>{
+  const el=document.getElementById("statusSalvo");
+  if(el) el.addEventListener("click",()=>{ if(!SiteSync.hasToken()) SiteSync.askToken(); });
+});
+function salvar(){ SiteSync.save(estado); }
+// agenda um salvamento (debounce) para não gravar a cada tecla
+function agendarSalvar(){clearTimeout(_timer);_timer=setTimeout(salvar,400);}
+
+async function carregarSalvo(){
+  try{
+    const d=await SiteSync.load();
+    if(d){
+      Object.entries(d).forEach(([k,v])=>{if(estado[k])Object.assign(estado[k],v)});
+      marcarStatus("Preenchimento anterior recuperado. Salvamento automático ativo.","");
+    }
+  }catch(err){/* começa em branco se não houver nada salvo */}
+}
+
+const $ = s=>document.querySelector(s);
+const lista = $("#lista");
+
+// popular filtros
+const setores=[...new Set(ITENS.map(i=>i[3]).filter(Boolean))].sort();
+setores.forEach(s=>{const o=document.createElement("option");o.value=o.textContent=s;$("#fSetor").append(o)});
+const clausulas=[...new Set(ITENS.map(i=>i[2]).filter(Boolean))];
+clausulas.forEach(c=>{const o=document.createElement("option");o.value=o.textContent=c;$("#fClausula").append(o)});
+
+let filtroStatus="";
+
+function render(){
+  const q=$("#busca").value.toLowerCase(), fs=$("#fSetor").value,
+        fc=$("#fClausula").value, apenasNao=$("#fMpscNao").checked;
+  lista.innerHTML="";
+  let visiveis=0;
+  GRUPOS.forEach(([ini,fim,titulo])=>{
+    const doGrupo=ITENS.filter(i=>i[0]>=ini&&i[0]<=fim).filter(i=>{
+      const [n,txt,cl,setor,mpsc]=i;
+      if(q && !(txt.toLowerCase().includes(q)||cl.toLowerCase().includes(q)||setor.toLowerCase().includes(q)||String(n)===q)) return false;
+      if(fs && setor!==fs) return false;
+      if(fc && cl!==fc) return false;
+      if(apenasNao && mpsc!=="Não") return false;
+      if(filtroStatus && estado[n].st!==filtroStatus) return false;
+      return true;
+    });
+    if(!doGrupo.length) return;
+    const h=document.createElement("div");h.className="grupo-titulo";h.textContent=titulo;lista.append(h);
+    doGrupo.forEach(i=>{lista.append(cartao(i));visiveis++});
+  });
+  if(!visiveis) lista.innerHTML='<div class="vazio">Nenhum item corresponde aos filtros.</div>';
+  atualizarPainel();
+}
+
+function cartao([n,txt,cl,setor,mpsc,obsM]){
+  const e=estado[n];
+  const div=document.createElement("div");
+  div.className="item"+(txt.startsWith("[")?" faltante":"");
+  div.dataset.st=e.st;
+  div.innerHTML=`
+    <div class="carimbo"></div>
+    <div class="topo"><div class="num">${n}</div><div class="texto">${txt}</div></div>
+    <div class="meta">
+      ${cl?`<span class="tag">TAC ${cl}</span>`:""}
+      ${setor?`<span class="tag">${setor}</span>`:""}
+      ${mpsc?`<span class="tag ${mpsc==="Não"?"mpsc-nao":"mpsc-sim"}">MPSC: ${mpsc}</span>`:""}
+    </div>
+    ${obsM?`<div class="obs-mpsc">MPSC: ${obsM}</div>`:""}
+    ${(()=>{const ts=textoLegal(n);return ts.length?`
+    <details class="lei">
+      <summary>📖 Embasamento jurídico (texto da lei)</summary>
+      ${ts.map(t=>`<p>${t}</p>`).join("")}
+    </details>`:"";})()}
+    <div class="status-btns">
+      ${["Sim","Não","Parcial","N/A"].map(v=>`<button class="sbtn" data-v="${v}">${v}</button>`).join("")}
+    </div>
+    <div class="link-linha">
+      <input type="url" class="t-ev" placeholder="🔗 Link de onde está no portal…" value="${e.ev.replace(/"/g,"&quot;")}">
+      <a class="btn-abrir" target="_blank" rel="noopener" ${e.ev?`href="${e.ev.replace(/"/g,"&quot;")}"`:"hidden"}>Abrir</a>
+    </div>
+    <button class="toggle-det">${e.obs?"Observações ✎":"+ observações"}</button>
+    <div class="detalhes">
+      <label>Observações</label>
+      <textarea class="t-obs">${e.obs}</textarea>
+      ${e.data?`<div class="data-verif">Verificado em ${e.data}</div>`:""}
+    </div>`;
+  div.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",()=>{
+    const v=b.dataset.v;
+    e.st = (e.st===v)?"Pendente":v;
+    e.data = e.st==="Pendente"?"":new Date().toLocaleDateString("pt-BR");
+    div.dataset.st=e.st;
+    const dv=div.querySelector(".data-verif");
+    if(dv) dv.remove();
+    if(e.data){const d=document.createElement("div");d.className="data-verif";
+      d.textContent="Verificado em "+e.data;div.querySelector(".detalhes").append(d)}
+    atualizarPainel();
+    agendarSalvar();
+  }));
+  div.querySelector(".toggle-det").addEventListener("click",()=>div.classList.toggle("aberto"));
+  const inpLink=div.querySelector(".t-ev"), btnAbrir=div.querySelector(".btn-abrir");
+  inpLink.addEventListener("input",ev=>{
+    e.ev=ev.target.value.trim();
+    if(e.ev){btnAbrir.href=e.ev;btnAbrir.hidden=false}
+    else{btnAbrir.hidden=true;btnAbrir.removeAttribute("href")}
+    agendarSalvar();
+  });
+  div.querySelector(".t-obs").addEventListener("input",ev=>{e.obs=ev.target.value;agendarSalvar();});
+  return div;
+}
+
+function atualizarPainel(){
+  const tot=ITENS.length;
+  const c={Sim:0,"Não":0,Parcial:0,"N/A":0,Pendente:0};
+  Object.values(estado).forEach(e=>c[e.st]++);
+  $("#barra").innerHTML=
+    `<span class="b-sim" style="width:${c.Sim/tot*100}%"></span>`+
+    `<span class="b-parcial" style="width:${c.Parcial/tot*100}%"></span>`+
+    `<span class="b-nao" style="width:${c["Não"]/tot*100}%"></span>`+
+    `<span class="b-na" style="width:${c["N/A"]/tot*100}%"></span>`;
+  const defs=[["Sim","c-sim"],["Não","c-nao"],["Parcial","c-parcial"],["N/A","c-na"],["Pendente","c-pend"]];
+  $("#contadores").innerHTML=defs.map(([k,cls])=>
+    `<span class="cont ${cls}${filtroStatus===k?" ativo":""}" data-k="${k}">${k}<b>${c[k]}</b></span>`).join("")+
+    `<span class="cont" style="margin-left:auto">Verificados <b>${tot-c.Pendente}/${tot}</b></span>`;
+  document.querySelectorAll(".cont[data-k]").forEach(el=>el.addEventListener("click",()=>{
+    filtroStatus = filtroStatus===el.dataset.k ? "" : el.dataset.k;
+    render();
+  }));
+}
+
+// Exportar CSV (para anexar em CI / resposta ao MP)
+function baixar(nome,conteudo,tipo){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo}));
+  a.download=nome;a.click();URL.revokeObjectURL(a.href);
+}
+$("#btnCSV").addEventListener("click",()=>{
+  const esc=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const linhas=[["Nº","Item","Cláusula TAC","Setor","Avaliação MPSC","Verificação atual","Data","Evidência","Observações"].map(esc).join(";")];
+  ITENS.forEach(([n,txt,cl,setor,mpsc])=>{
+    const e=estado[n];
+    linhas.push([n,txt,cl,setor,mpsc,e.st,e.data,e.ev,e.obs].map(esc).join(";"));
+  });
+  baixar("verificacao_tac.csv","\uFEFF"+linhas.join("\r\n"),"text/csv;charset=utf-8");
+});
+
+["busca","fSetor","fClausula","fMpscNao"].forEach(id=>{
+  $("#"+id).addEventListener("input",render);
+  $("#"+id).addEventListener("change",render);
+});
+
+// Carrega o que já foi preenchido antes e então desenha a lista
+(async()=>{ await carregarSalvo(); render(); })();
+</script>
+</body>
+</html>

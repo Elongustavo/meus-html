@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lâmpada para os meus pés — Guia de Estudo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noite:#131a2b;        /* céu profundo */
+    --noite-2:#1b2440;      /* painel */
+    --ouro:#d4a941;         /* iluminura */
+    --ouro-claro:#e8c96f;
+    --marfim:#f3ead8;       /* pergaminho */
+    --marfim-fraco:#c9c2ae;
+    --azul-suave:#7d8db3;
+    --linha:rgba(212,169,65,.25);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--noite);
+    color:var(--marfim);
+    font-family:'Lora',Georgia,serif;
+    line-height:1.7;
+    font-size:17px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px 80px}
+
+  /* ---------- HERO ---------- */
+  header{
+    text-align:center;
+    padding:72px 20px 48px;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,169,65,.14), transparent 70%),
+      var(--noite);
+    border-bottom:1px solid var(--linha);
+  }
+  .estrelas{font-size:13px;letter-spacing:.45em;color:var(--ouro);text-transform:uppercase;font-family:'Lora',serif}
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(2.3rem,8vw,3.6rem);
+    color:var(--marfim);
+    margin:18px 0 6px;
+    line-height:1.15;
+  }
+  h1 em{font-style:italic;color:var(--ouro-claro)}
+  .subtitulo{color:var(--azul-suave);font-size:1.02rem;max-width:34ch;margin:0 auto}
+  .verso-hero{
+    margin:34px auto 0;max-width:46ch;
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:1.35rem;color:var(--ouro-claro);line-height:1.5;
+  }
+  .verso-hero small{display:block;font-style:normal;font-family:'Lora',serif;font-size:.8rem;color:var(--azul-suave);letter-spacing:.15em;margin-top:10px;text-transform:uppercase}
+
+  /* ---------- COMO USAR ---------- */
+  .como-usar{
+    margin:44px 0 10px;
+    border:1px solid var(--linha);
+    border-radius:6px;
+    padding:24px 22px;
+    background:var(--noite-2);
+  }
+  .como-usar h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--ouro);margin-bottom:12px;font-weight:600}
+  .como-usar li{margin:8px 0 8px 20px;color:var(--marfim)}
+  .como-usar strong{color:var(--ouro-claro);font-weight:600}
+
+  /* ---------- FASES ---------- */
+  .fase{margin-top:56px}
+  .fase-cab{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--linha);padding-bottom:14px;margin-bottom:8px}
+  .capitular{
+    font-family:'Cormorant Garamond',serif;
+    font-size:3.4rem;line-height:1;
+    color:var(--ouro);font-weight:700;
+    text-shadow:0 0 24px rgba(212,169,65,.35);
+    min-width:52px;text-align:center;
+  }
+  .fase-cab h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.75rem;color:var(--marfim);line-height:1.2}
+  .fase-cab .duracao{display:block;font-family:'Lora',serif;font-size:.78rem;color:var(--azul-suave);text-transform:uppercase;letter-spacing:.2em;margin-top:4px}
+
+  .chama{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:1.22rem;color:var(--ouro-claro);
+    padding:18px 0 4px;line-height:1.55;
+  }
+
+  /* semanas */
+  details{border:1px solid var(--linha);border-radius:6px;margin:14px 0;background:var(--noite-2);overflow:hidden}
+  summary{
+    cursor:pointer;list-style:none;
+    padding:16px 18px;
+    font-weight:600;color:var(--marfim);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary .seta{color:var(--ouro);transition:transform .25s;font-size:.9rem}
+  details[open] summary .seta{transform:rotate(90deg)}
+  summary:focus-visible{outline:2px solid var(--ouro);outline-offset:-2px}
+  .semana-corpo{padding:2px 18px 18px;border-top:1px solid var(--linha)}
+
+  .dia{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed rgba(125,141,179,.18)}
+  .dia:last-of-type{border-bottom:none}
+  .dia input[type=checkbox]{
+    appearance:none;width:19px;height:19px;flex:none;margin-top:4px;
+    border:1.5px solid var(--ouro);border-radius:50%;cursor:pointer;position:relative;
+  }
+  .dia input[type=checkbox]:checked{background:var(--ouro)}
+  .dia input[type=checkbox]:checked::after{
+    content:"✦";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:11px;color:var(--noite);
+  }
+  .dia label{cursor:pointer}
+  .dia .ref{color:var(--ouro-claro);font-weight:600}
+  .dia .nota{display:block;font-size:.9rem;color:var(--azul-suave)}
+
+  /* caixas */
+  .caixa{border-left:2px solid var(--ouro);padding:14px 16px;margin:16px 0;background:rgba(212,169,65,.06);border-radius:0 6px 6px 0}
+  .caixa h4{font-family:'Lora',serif;font-size:.78rem;text-transform:uppercase;letter-spacing:.22em;color:var(--ouro);margin-bottom:8px}
+  .caixa li{margin:7px 0 7px 18px;font-size:.98rem}
+  .caixa.pesquisa{border-left-color:var(--azul-suave);background:rgba(125,141,179,.08)}
+  .caixa.pesquisa h4{color:var(--azul-suave)}
+
+  .personagens{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .personagens span{
+    font-size:.85rem;padding:5px 12px;border:1px solid var(--linha);
+    border-radius:999px;color:var(--marfim-fraco);
+  }
+
+  /* Enoque */
+  .enoque{
+    margin-top:56px;border:1px solid var(--ouro);border-radius:8px;
+    padding:28px 24px;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 0%, rgba(212,169,65,.12), transparent 70%),
+      var(--noite-2);
+  }
+  .enoque h2{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--ouro-claro);font-weight:600;margin-bottom:6px}
+  .enoque .aviso{font-size:.88rem;color:var(--azul-suave);border:1px dashed var(--linha);border-radius:6px;padding:10px 14px;margin:14px 0}
+  .enoque p{margin:10px 0}
+
+  footer{text-align:center;margin-top:70px;color:var(--azul-suave);font-size:.85rem}
+  footer .verso-final{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--ouro-claro);margin-bottom:8px}
+
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}summary .seta{transition:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="estrelas">✦ &nbsp; ✦ &nbsp; ✦</div>
+  <h1>Lâmpada para <em>os meus pés</em></h1>
+  <p class="subtitulo">Um plano devocional de 6 meses pela Bíblia — com uma parada no Livro de Enoque</p>
+  <p class="verso-hero">"Lâmpada para os meus pés é a tua palavra e luz para o meu caminho."
+    <small>Salmo 119:105</small>
+  </p>
+</header>
+
+<div class="wrap">
+
+  <section class="como-usar">
+    <h2>Como usar este guia</h2>
+    <ul>
+      <li><strong>Ritmo:</strong> 2–3 capítulos por dia, 15–20 minutos. Constância vale mais que volume.</li>
+      <li><strong>Tradução:</strong> NVI ou NAA (app YouVersion, gratuito).</li>
+      <li><strong>Marque os círculos</strong> conforme avança. Toque nas semanas para abrir o roteiro.</li>
+      <li><strong>Anote uma pergunta por dia.</strong> A leitura que não gera pergunta ainda não terminou.</li>
+    </ul>
+  </section>
+
+  <!-- ============ FASE 1 ============ -->
+  <section class="fase">
+    <div class="fase-cab">
+      <div class="capitular">I</div>
+      <h2>Jesus primeiro
+        <span class="duracao">Semanas 1–4 · João e Marcos</span>
+      </h2>
+    </div>
+    <p class="chama">Antes de entender a história inteira, conheça Aquele para quem ela aponta. João escreveu para que você creia — leia para descobrir se ele consegue.</p>
+
+    <div class="personagens">
+      <span>Jesus</span><span>João Batista</span><span>Pedro</span><span>Nicodemos</span><span>A samaritana</span><span>Tomé</span><span>Pilatos</span>
+    </div>
+
+    <details open>
+      <summary>Semana 1 — João 1–7 <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s1d1"><label for="s1d1"><span class="ref">João 1</span><span class="nota">"No princípio era o Verbo" — por que João ecoa Gênesis 1:1 de propósito?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s1d2"><label for="s1d2"><span class="ref">João 2–3</span><span class="nota">Nicodemos vem à noite. O que ele arriscava ao procurar Jesus?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s1d3"><label for="s1d3"><span class="ref">João 4</span><span class="nota">Um judeu conversando com uma mulher samaritana quebrava quantas regras sociais?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s1d4"><label for="s1d4"><span class="ref">João 5</span><span class="nota">38 anos doente. Por que Jesus pergunta "você quer ser curado"?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s1d5"><label for="s1d5"><span class="ref">João 6</span><span class="nota">Depois do milagre dos pães, a multidão o abandona. O que Jesus disse que afastou tanta gente?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s1d6"><label for="s1d6"><span class="ref">João 7</span><span class="nota">Nem os irmãos dele criam. Como era ser irmão de Jesus?</span></label></div>
+        <div class="caixa pesquisa">
+          <h4>Para pesquisar</h4>
+          <ul>
+            <li>O que significa "Verbo" (<em>Logos</em>) no grego, e por que João escolheu essa palavra?</li>
+            <li>Quem eram os samaritanos e por que judeus os evitavam?</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semana 2 — João 8–14 <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s2d1"><label for="s2d1"><span class="ref">João 8</span><span class="nota">"Antes que Abraão existisse, EU SOU." Por que quiseram apedrejá-lo por essa frase?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s2d2"><label for="s2d2"><span class="ref">João 9–10</span><span class="nota">O cego curado é expulso da sinagoga. O que a cura custou a ele?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s2d3"><label for="s2d3"><span class="ref">João 11</span><span class="nota">"Jesus chorou" — o versículo mais curto da Bíblia. Por que chorar se ele já sabia o final?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s2d4"><label for="s2d4"><span class="ref">João 12–13</span><span class="nota">O Mestre lava pés — trabalho do escravo mais baixo da casa. O que isso redefine sobre poder?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s2d5"><label for="s2d5"><span class="ref">João 14</span><span class="nota">"Eu sou o caminho, a verdade e a vida." Afirmação exclusiva demais? Investigue o contexto.</span></label></div>
+        <div class="caixa pesquisa">
+          <h4>Para pesquisar</h4>
+          <ul>
+            <li>"EU SOU" em Êxodo 3:14 — que conexão Jesus estava fazendo?</li>
+            <li>Os sete "Eu sou" do Evangelho de João. Liste todos.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semana 3 — João 15–21 <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s3d1"><label for="s3d1"><span class="ref">João 15–16</span><span class="nota">A videira e os ramos. O que morre quando se corta a conexão?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s3d2"><label for="s3d2"><span class="ref">João 17</span><span class="nota">A oração mais longa de Jesus registrada — e ele ora por você (v. 20). Leia devagar.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s3d3"><label for="s3d3"><span class="ref">João 18</span><span class="nota">"O que é a verdade?", pergunta Pilatos — e sai sem esperar resposta. Você esperaria?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s3d4"><label for="s3d4"><span class="ref">João 19</span><span class="nota">A crucificação. Note quem fica ao pé da cruz e quem fugiu.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s3d5"><label for="s3d5"><span class="ref">João 20–21</span><span class="nota">Tomé duvida — e Jesus não o rejeita por isso. O que isso diz sobre fé e dúvida?</span></label></div>
+        <div class="caixa">
+          <h4>Frase para levar</h4>
+          <ul><li>"Bem-aventurados os que não viram e creram" — João escreveu isso pensando em quem leria séculos depois. Ou seja: em você.</li></ul>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semana 4 — Marcos 1–16 (2 cap./dia) <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s4d1"><label for="s4d1"><span class="ref">Marcos 1–4</span><span class="nota">Marcos é urgente: a palavra "imediatamente" aparece mais de 40 vezes. Conte quantas você acha.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s4d2"><label for="s4d2"><span class="ref">Marcos 5–8</span><span class="nota">"E vós, quem dizeis que eu sou?" — a pergunta central do livro, feita também a você.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s4d3"><label for="s4d3"><span class="ref">Marcos 9–12</span><span class="nota">"Creio; ajuda a minha incredulidade" — a oração mais honesta da Bíblia?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s4d4"><label for="s4d4"><span class="ref">Marcos 13–16</span><span class="nota">Quem anuncia a ressurreição primeiro? Note quem são as testemunhas escolhidas.</span></label></div>
+        <div class="caixa pesquisa">
+          <h4>Para pesquisar</h4>
+          <ul>
+            <li>Tradição antiga diz que Marcos escreveu as memórias de Pedro. Que pistas disso aparecem no texto?</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ FASE 2 ============ -->
+  <section class="fase">
+    <div class="fase-cab">
+      <div class="capitular">II</div>
+      <h2>As origens
+        <span class="duracao">Semanas 5–10 · Gênesis e Êxodo</span>
+      </h2>
+    </div>
+    <p class="chama">Toda a Bíblia é escrita na gramática de Gênesis. Aqui nascem as perguntas que o resto do livro passa mil páginas respondendo.</p>
+
+    <div class="personagens">
+      <span>Adão e Eva</span><span>Caim</span><span>Noé</span><span>Enoque</span><span>Abraão</span><span>Sara</span><span>Jacó</span><span>José</span><span>Moisés</span><span>Faraó</span>
+    </div>
+
+    <details>
+      <summary>Semana 5 — Gênesis 1–11 (a pré-história) <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s5d1"><label for="s5d1"><span class="ref">Gênesis 1–2</span><span class="nota">Dois relatos da criação, lado a lado. O que cada um enfatiza?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s5d2"><label for="s5d2"><span class="ref">Gênesis 3–4</span><span class="nota">A serpente não nega a ordem de Deus — ela a distorce. Como funciona a tentação?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s5d3"><label for="s5d3"><span class="ref">Gênesis 5–6</span><span class="nota">⭐ Gênesis 5:24: "Enoque andou com Deus, e já não era, porque Deus o tomou." Quatro versículos misteriosos — e a porta de entrada para o Livro de Enoque (abaixo).</span></label></div>
+        <div class="dia"><input type="checkbox" id="s5d4"><label for="s5d4"><span class="ref">Gênesis 7–9</span><span class="nota">O dilúvio. Compare com a Epopeia de Gilgamesh — semelhanças e diferenças dizem muito.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s5d5"><label for="s5d5"><span class="ref">Gênesis 10–11</span><span class="nota">Babel: a humanidade quer "fazer um nome para si". O que há de errado nisso?</span></label></div>
+        <div class="caixa pesquisa">
+          <h4>Para pesquisar</h4>
+          <ul>
+            <li>Quem são os "filhos de Deus" e os nefilins de Gênesis 6:1–4? Compare as 3 principais interpretações.</li>
+            <li>Por que a genealogia de Gênesis 5 repete "e morreu" — exceto com Enoque?</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semanas 6–7 — Gênesis 12–36 (Abraão e Jacó) <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s6d1"><label for="s6d1"><span class="ref">Gênesis 12–15</span><span class="nota">Deus promete um filho a um casal idoso e estéril. Abraão "creu" — mas o que a fé dele tem de imperfeito nos capítulos seguintes?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s6d2"><label for="s6d2"><span class="ref">Gênesis 16–20</span><span class="nota">Hagar: a primeira pessoa na Bíblia a dar um nome a Deus. Quem era ela na hierarquia da casa?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s6d3"><label for="s6d3"><span class="ref">Gênesis 21–24</span><span class="nota">O sacrifício de Isaque (cap. 22): o texto mais debatido do livro. O que Deus estava provando — e o que não estava?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s6d4"><label for="s6d4"><span class="ref">Gênesis 25–28</span><span class="nota">Jacó, o trapaceiro escolhido. Por que Deus trabalha com gente tão torta?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s6d5"><label for="s6d5"><span class="ref">Gênesis 29–31</span><span class="nota">O enganador é enganado por Labão. Note a ironia: Jacó colhe o que plantou.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s6d6"><label for="s6d6"><span class="ref">Gênesis 32–36</span><span class="nota">Jacó luta com Deus a noite inteira e sai mancando — e abençoado. O que essa cena diz sobre fé?</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semana 8 — Gênesis 37–50 (José) <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s8d1"><label for="s8d1"><span class="ref">Gênesis 37–39</span><span class="nota">Vendido pelos irmãos, caluniado pela patroa, preso injustamente. Onde está Deus nessa sequência? (Pista: 39:2, 21)</span></label></div>
+        <div class="dia"><input type="checkbox" id="s8d2"><label for="s8d2"><span class="ref">Gênesis 40–43</span><span class="nota">Da prisão ao segundo posto do Egito em um dia. Quantos anos de espera couberam entre os capítulos?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s8d3"><label for="s8d3"><span class="ref">Gênesis 44–47</span><span class="nota">José testa os irmãos antes de se revelar. É vingança, prudência ou outra coisa?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s8d4"><label for="s8d4"><span class="ref">Gênesis 48–50</span><span class="nota">"Vocês planejaram o mal contra mim, mas Deus o tornou em bem" — a chave de toda a história de José, e talvez da sua.</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semanas 9–10 — Êxodo 1–20; 32–34 <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="s9d1"><label for="s9d1"><span class="ref">Êxodo 1–4</span><span class="nota">Moisés: príncipe, fugitivo, pastor, libertador — aos 80 anos. Ele dá 5 desculpas a Deus. Quais são?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s9d2"><label for="s9d2"><span class="ref">Êxodo 5–10</span><span class="nota">As pragas atacam, uma a uma, os deuses do Egito. Pesquise qual praga confronta qual divindade.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s9d3"><label for="s9d3"><span class="ref">Êxodo 11–14</span><span class="nota">Páscoa e mar aberto. Por que essa noite é lembrada há mais de 3 mil anos?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s9d4"><label for="s9d4"><span class="ref">Êxodo 15–18</span><span class="nota">Três dias depois do maior milagre, o povo já reclama. Quanto dura a memória de um livramento?</span></label></div>
+        <div class="dia"><input type="checkbox" id="s9d5"><label for="s9d5"><span class="ref">Êxodo 19–20</span><span class="nota">Os Dez Mandamentos. Leia como carta de liberdade, não como código penal: "Eu sou o Senhor que te tirou da escravidão" vem antes de qualquer ordem.</span></label></div>
+        <div class="dia"><input type="checkbox" id="s9d6"><label for="s9d6"><span class="ref">Êxodo 32–34</span><span class="nota">O bezerro de ouro — traição aos pés do monte. E a autodefinição de Deus em 34:6–7, o versículo mais citado pela própria Bíblia.</span></label></div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ ENOQUE ============ -->
+  <section class="enoque" id="enoque">
+    <h2>✦ Parada especial: o Livro de Enoque</h2>
+    <p><strong>Quando ler:</strong> logo após Gênesis 5–6 (Semana 5). É exatamente ali que ele se encaixa: Enoque expande a história dos "filhos de Deus", dos nefilins e do homem que "andou com Deus e já não era".</p>
+    <div class="aviso">Leia sabendo o que está lendo: 1 Enoque <em>não faz parte do cânon</em> da Bíblia (exceto na Igreja Ortodoxa Etíope). É literatura judaica do período entre os Testamentos (~séc. III a.C.–I d.C.), citada na carta de Judas (v. 14–15) e valiosa para entender o mundo em que o Novo Testamento nasceu. Complemento, não Escritura.</div>
+    <p><strong>Roteiro de leitura (2 semanas, em paralelo com o plano):</strong></p>
+    <div class="dia"><input type="checkbox" id="e1"><label for="e1"><span class="ref">Livro dos Vigilantes (cap. 1–36)</span><span class="nota">A parte mais famosa: os anjos que descem, os gigantes, a viagem de Enoque pelos céus. Leia com Gênesis 6 aberto do lado.</span></label></div>
+    <div class="dia"><input type="checkbox" id="e2"><label for="e2"><span class="ref">Livro das Parábolas (cap. 37–71)</span><span class="nota">O "Filho do Homem" — título que Jesus usa para si mesmo. Coincidência? Investigue.</span></label></div>
+    <div class="dia"><input type="checkbox" id="e3"><label for="e3"><span class="ref">Judas 14–15 + 2 Pedro 2:4</span><span class="nota">Os ecos de Enoque dentro do Novo Testamento. Encontre-os você mesmo.</span></label></div>
+    <div class="caixa pesquisa">
+      <h4>Para pesquisar</h4>
+      <ul>
+        <li>Por que 1 Enoque ficou fora do cânon judaico e cristão — e por que a Etiópia o manteve?</li>
+        <li>Fragmentos de Enoque foram achados entre os Manuscritos do Mar Morto. O que isso revela sobre sua importância na época de Jesus?</li>
+        <li>Quem eram Azazel e Semiazaz na narrativa dos Vigilantes?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ FASE 3 ============ -->
+  <section class="fase">
+    <div class="fase-cab">
+      <div class="capitular">III</div>
+      <h2>Reis e profetas
+        <span class="duracao">Semanas 11–18 · Samuel, Reis, Daniel, Jonas</span>
+      </h2>
+    </div>
+    <p class="chama">Um pastor de ovelhas vira rei. Um rei sábio vira idólatra. Um profeta foge de Deus de navio. Nenhum roteirista inventaria personagens tão humanos.</p>
+
+    <div class="personagens">
+      <span>Samuel</span><span>Saul</span><span>Davi</span><span>Golias</span><span>Jônatas</span><span>Bate-Seba</span><span>Natã</span><span>Salomão</span><span>Daniel</span><span>Jonas</span>
+    </div>
+
+    <details>
+      <summary>Semanas 11–13 — 1 Samuel <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f3d1"><label for="f3d1"><span class="ref">1 Samuel 1–8</span><span class="nota">O povo exige um rei "como as outras nações". Deus atende — e avisa do preço. Ter o que se pede pode ser castigo?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d2"><label for="f3d2"><span class="ref">1 Samuel 9–15</span><span class="nota">Saul: alto, bonito, escolhido — e destruído por dentro. Em que momento exato ele começa a cair?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d3"><label for="f3d3"><span class="ref">1 Samuel 16–17</span><span class="nota">"O homem vê a aparência; o Senhor vê o coração." Depois, Davi e Golias — releia a cena esquecendo que já conhece o final.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d4"><label for="f3d4"><span class="ref">1 Samuel 18–26</span><span class="nota">Davi poupa Saul duas vezes quando podia matá-lo. De onde vem essa contenção?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d5"><label for="f3d5"><span class="ref">1 Samuel 27–31</span><span class="nota">O fim trágico de Saul. Compare a primeira e a última aparição dele: o que se perdeu no caminho?</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semanas 14–15 — 2 Samuel <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f3d6"><label for="f3d6"><span class="ref">2 Samuel 1–7</span><span class="nota">Davi rei — e a promessa do cap. 7 que ecoa até o Natal. Que dinastia é essa que não acaba?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d7"><label for="f3d7"><span class="ref">2 Samuel 11–12</span><span class="nota">Bate-Seba e Urias: o capítulo que nenhum biógrafo pago escreveria sobre seu herói. Por que a Bíblia expõe seu maior rei?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d8"><label for="f3d8"><span class="ref">2 Samuel 13–18</span><span class="nota">A profecia de Natã se cumpre: a espada não se aparta da casa de Davi. Absalão, o filho rebelde.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d9"><label for="f3d9"><span class="ref">Salmo 51</span><span class="nota">A oração de Davi depois da queda. Leia como quem também já precisou recomeçar.</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semanas 16–18 — Salomão, Daniel, Jonas <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f3d10"><label for="f3d10"><span class="ref">1 Reis 1–11</span><span class="nota">Salomão pede sabedoria e ganha tudo — e tudo o corrompe. O homem mais sábio do mundo terminou o mais tolo?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d11"><label for="f3d11"><span class="ref">Daniel 1–6</span><span class="nota">Como manter a integridade servindo a um império pagão? Daniel foi funcionário público de três governos diferentes sem se vender.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f3d12"><label for="f3d12"><span class="ref">Jonas 1–4</span><span class="nota">O único profeta que foge — porque temia que Deus perdoasse seus inimigos. O livro termina com uma pergunta sem resposta. Responda você.</span></label></div>
+        <div class="caixa pesquisa">
+          <h4>Para pesquisar</h4>
+          <ul>
+            <li>Nínive era capital da Assíria, o império mais cruel da época. O que Jonas tinha contra eles?</li>
+            <li>Daniel e Enoque compartilham o gênero "apocalíptico". O que define esse tipo de literatura?</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ FASE 4 ============ -->
+  <section class="fase">
+    <div class="fase-cab">
+      <div class="capitular">IV</div>
+      <h2>Sabedoria e igreja
+        <span class="duracao">Semanas 19–24 · Salmos, Provérbios, Atos, Romanos</span>
+      </h2>
+    </div>
+    <p class="chama">Os Salmos ensinam a orar com raiva, medo e alegria — sem máscara. Atos mostra doze homens comuns virando o mundo de cabeça para baixo.</p>
+
+    <div class="personagens">
+      <span>Davi (poeta)</span><span>Pedro</span><span>Estêvão</span><span>Paulo</span><span>Barnabé</span><span>Lídia</span><span>Priscila e Áquila</span>
+    </div>
+
+    <details>
+      <summary>Semanas 19–20 — Salmos e Provérbios <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f4d1"><label for="f4d1"><span class="ref">Salmos 1, 23, 27</span><span class="nota">O Salmo 23 foi escrito por quem realmente pastoreou ovelhas — e fugiu por vales de sombra de verdade.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d2"><label for="f4d2"><span class="ref">Salmos 42, 51, 73</span><span class="nota">Salmo 73: "quase escorreguei ao ver a prosperidade dos ímpios". A Bíblia deixa você duvidar em voz alta.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d3"><label for="f4d3"><span class="ref">Salmos 91, 103, 139</span><span class="nota">Salmo 139: não há lugar onde se esconder de Deus — e o salmista acha isso bom. Você acharia?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d4"><label for="f4d4"><span class="ref">Provérbios 1–4</span><span class="nota">"O temor do Senhor é o princípio da sabedoria." Temor aqui é medo ou outra coisa? Pesquise.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d5"><label for="f4d5"><span class="ref">Provérbios 10; 15; 31</span><span class="nota">Um capítulo de Provérbios por dia do mês é hábito antigo — 31 capítulos, 31 dias. Teste no próximo mês.</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semanas 21–23 — Atos <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f4d6"><label for="f4d6"><span class="ref">Atos 1–4</span><span class="nota">Pedro, que negou Jesus com medo de uma serva, agora prega para milhares. O que aconteceu entre uma cena e outra?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d7"><label for="f4d7"><span class="ref">Atos 5–8</span><span class="nota">Estêvão: o primeiro mártir. Note quem guardava as capas dos que o apedrejavam.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d8"><label for="f4d8"><span class="ref">Atos 9–12</span><span class="nota">O perseguidor vira apóstolo. Se Deus mudou Saulo de Tarso, existe caso perdido?</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d9"><label for="f4d9"><span class="ref">Atos 13–20</span><span class="nota">As viagens de Paulo. Abra um mapa e acompanhe: naufrágios, prisões, fugas pela muralha em um cesto.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d10"><label for="f4d10"><span class="ref">Atos 21–28</span><span class="nota">O livro termina sem terminar — Paulo preso, pregando. Lucas deixou o final em aberto de propósito?</span></label></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Semana 24 — Romanos (o grande argumento) <span class="seta">▶</span></summary>
+      <div class="semana-corpo">
+        <div class="dia"><input type="checkbox" id="f4d11"><label for="f4d11"><span class="ref">Romanos 1–4</span><span class="nota">O diagnóstico: ninguém é justo. A tese de Paulo derruba tanto o religioso quanto o pagão.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d12"><label for="f4d12"><span class="ref">Romanos 5–8</span><span class="nota">Do "miserável homem que eu sou" ao "nada nos separará do amor de Deus" — o capítulo 8 é considerado o ponto mais alto do NT.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d13"><label for="f4d13"><span class="ref">Romanos 9–12</span><span class="nota">"Transformai-vos pela renovação da mente" — fé que passa pela inteligência, não apesar dela.</span></label></div>
+        <div class="dia"><input type="checkbox" id="f4d14"><label for="f4d14"><span class="ref">Romanos 13–16</span><span class="nota">A lista final de nomes (cap. 16): quantas mulheres Paulo destaca como colaboradoras? Conte.</span></label></div>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p class="verso-final">"Examinavam as Escrituras todos os dias para ver se as coisas eram de fato assim."</p>
+    <p>Atos 17:11 — sobre os bereanos, os leitores que não aceitavam nada sem investigar.<br>Seja um bereano.</p>
+  </footer>
+
+</div>
+<div id="statusSync" style="position:fixed;left:0;right:0;bottom:0;text-align:center;font:12px/1.4 ui-monospace,monospace;padding:8px 12px;background:rgba(250,248,243,.95);border-top:1px solid rgba(0,0,0,.08);cursor:pointer;color:#6b6252">Carregando…</div>
+<script src="assets/sync.js"></script>
+<script>
+(function(){
+  const st=document.getElementById("statusSync");
+  const cores={ok:"#1E7A46",aviso:"#B98A00",erro:"#C0392B",salvando:"#B98A00"};
+  SiteSync.init({page:"estudo-biblico", onStatus:(t,c)=>{st.textContent=t;st.style.color=cores[c]||"#6b6252";}});
+  st.addEventListener("click",()=>{ if(!SiteSync.hasToken()) SiteSync.askToken(); });
+
+  const caixas=[...document.querySelectorAll('input[type="checkbox"]')];
+  function coletar(){
+    const marcados={};
+    caixas.forEach(c=>{ if(c.checked) marcados[c.id||""]=1; });
+    return marcados;
+  }
+  caixas.forEach(c=>c.addEventListener("change",()=>SiteSync.save(coletar())));
+
+  SiteSync.load().then(d=>{
+    if(d) caixas.forEach(c=>{ c.checked = !!d[c.id]; });
+    if(!SiteSync.hasToken()) st.textContent="Toque aqui para ativar a sincronização entre aparelhos.";
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guias — Elon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE9; --card:#FFFFFF; --ink:#1B1F24; --mute:#6A7076; --line:#DDD8CE;
+    --trabalho:#1E5C46; --estudo:#2B4C8C; --fe:#9A6B15; --pessoal:#175E63;
+    --ok:#1E7A46; --aviso:#B98A00; --erro:#C0392B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding:26px 16px 70px}
+  .wrap{max-width:640px;margin:0 auto}
+
+  header{margin-bottom:26px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;line-height:1.05;margin-top:6px}
+  h1 span{color:var(--fe)}
+  .sub{color:var(--mute);font-size:14px;margin-top:8px;max-width:46ch}
+
+  .grupo{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin:26px 0 10px}
+
+  a.card{display:flex;align-items:stretch;gap:0;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:10px;transition:transform .12s ease, box-shadow .12s ease}
+  a.card:active{transform:scale(.985)}
+  .aba{width:10px;flex:none}
+  .aba.trabalho{background:var(--trabalho)} .aba.estudo{background:var(--estudo)}
+  .aba.fe{background:var(--fe)} .aba.pessoal{background:var(--pessoal)}
+  .corpo{padding:14px 16px}
+  .titulo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px}
+  .desc{color:var(--mute);font-size:13px;margin-top:3px;line-height:1.45}
+
+  /* sincronização */
+  .sync{margin-top:34px;background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:16px}
+  .sync h2{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px}
+  .sync p{font-size:13px;color:var(--mute);line-height:1.5}
+  #syncStatus{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:10px;cursor:pointer}
+  #syncStatus.ok{color:var(--ok)} #syncStatus.aviso{color:var(--aviso)} #syncStatus.erro{color:var(--erro)}
+  .botoes{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;font-weight:600;padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+  button.principal{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  footer{margin-top:30px;text-align:center;color:var(--mute);font-size:12px;font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Arquivo pessoal</div>
+    <h1>Guias<span>.</span></h1>
+    <p class="sub">Ferramentas e roteiros de trabalho, estudo e vida — as marcações sincronizam entre os seus aparelhos.</p>
+  </header>
+
+  <div class="grupo">Trabalho</div>
+  <a class="card" href="tac-checklist.html">
+    <div class="aba trabalho"></div>
+    <div class="corpo">
+      <div class="titulo">Checklist TAC — Transparência</div>
+      <div class="desc">Os 83 itens do MPSC com status, evidências e exportação CSV.</div>
+    </div>
+  </a>
+
+  <div class="grupo">Fé</div>
+  <a class="card" href="estudo-biblico.html">
+    <div class="aba fe"></div>
+    <div class="corpo">
+      <div class="titulo">Lâmpada para os meus pés</div>
+      <div class="desc">Plano de leitura bíblica com progresso por dia.</div>
+    </div>
+  </a>
+
+  <!-- ============================================================
+       MODELO para adicionar um novo guia: copie o bloco abaixo,
+       troque o href, a classe da aba (trabalho | estudo | fe | pessoal),
+       o título e a descrição. Coloque dentro do grupo certo.
+
+  <a class="card" href="NOME-DO-ARQUIVO.html">
+    <div class="aba estudo"></div>
+    <div class="corpo">
+      <div class="titulo">Título do guia</div>
+      <div class="desc">Uma linha explicando o que é.</div>
+    </div>
+  </a>
+  ============================================================ -->
+
+  <div class="sync">
+    <h2>Sincronização</h2>
+    <p>As marcações são salvas neste aparelho e enviadas ao seu GitHub para aparecerem nos outros. Em cada aparelho novo, cole o token uma única vez.</p>
+    <div id="syncStatus">Verificando…</div>
+    <div class="botoes">
+      <button class="principal" id="btnToken">Colar token</button>
+      <button id="btnRemover">Remover token deste aparelho</button>
+    </div>
+  </div>
+
+  <footer>elon · guias</footer>
+</div>
+
+<script src="assets/sync.js"></script>
+<script>
+  const st = document.getElementById("syncStatus");
+  SiteSync.init({ page: "_index", onStatus: (t, c) => { st.textContent = t; st.className = c; } });
+
+  function refresh() {
+    if (SiteSync.hasToken()) { st.textContent = "Token configurado neste aparelho."; st.className = "ok"; }
+    else { st.textContent = "Sem token neste aparelho — as marcações ficam só locais."; st.className = "aviso"; }
+  }
+  document.getElementById("btnToken").addEventListener("click", () => { SiteSync.askToken(); refresh(); });
+  document.getElementById("btnRemover").addEventListener("click", () => { SiteSync.setToken(""); refresh(); });
+  st.addEventListener("click", () => { if (!SiteSync.hasToken()) { SiteSync.askToken(); refresh(); } });
+  refresh();
+</script>
+</body>
+</html>
