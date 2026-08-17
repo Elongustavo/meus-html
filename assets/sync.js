@@ -175,6 +175,26 @@ window.SiteSync = (function () {
       pendingData = data;
       clearTimeout(timer);
       timer = setTimeout(pushRemote, DEBOUNCE_MS);
+    },
+    /* Envia um arquivo binário (ex.: print) para o repositório e devolve o caminho.
+       base64Data: só o conteúdo base64 (sem o prefixo data:...). */
+    uploadFile: async function (path, base64Data) {
+      const r = repoInfo();
+      if (!r) throw new Error("local");
+      if (!token()) throw new Error("sem-token");
+      const url = "https://api.github.com/repos/" + r.owner + "/" + r.repo + "/contents/" + path;
+      // se já existe, precisa do sha para sobrescrever
+      let sha = null;
+      try {
+        const g = await fetch(url + "?t=" + Date.now(), { headers: headers() });
+        if (g.ok) { const j = await g.json(); sha = j.sha; }
+      } catch (e) {}
+      const body = { message: "print: " + path, content: base64Data };
+      if (sha) body.sha = sha;
+      const res = await fetch(url, { method: "PUT", headers: headers(), body: JSON.stringify(body) });
+      if (res.status === 401 || res.status === 403) throw new Error("auth");
+      if (!res.ok) throw new Error("http-" + res.status);
+      return path;
     }
   };
 })();

@@ -121,6 +121,17 @@
   .detalhes textarea{width:100%;border:1px solid var(--linha);border-radius:8px;
     padding:8px 10px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:52px;
     background:#FDFDFB}
+  .print-area{margin-top:12px}
+  .print-drop{border:1.5px dashed var(--linha);border-radius:8px;min-height:60px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:10px;cursor:pointer;background:#FDFDFB;transition:border-color .15s}
+  .print-drop:focus,.print-drop:hover{border-color:var(--verde);outline:none}
+  .print-hint{font-size:12px;color:var(--ink-soft)}
+  .print-thumb{max-width:100%;max-height:260px;border-radius:6px;display:block}
+  .print-msg{font-size:11.5px;margin-top:5px;min-height:14px}
+  .print-msg.ok{color:var(--verde)} .print-msg.erro{color:var(--verm)}
+  .print-remover{margin-top:6px;font-size:12px;padding:5px 10px;border:1px solid var(--linha);
+    border-radius:7px;background:var(--paper);cursor:pointer;color:var(--verm)}
   .detalhes label{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;
     letter-spacing:.06em;display:block;margin:8px 0 3px}
   .data-verif{font-size:12px;color:var(--ink-soft);margin-top:6px;font-variant-numeric:tabular-nums}
@@ -328,7 +339,13 @@ const GRUPOS = [
 
 // estado
 const estado = {};
-ITENS.forEach(i=>{estado[i[0]]={st:"Pendente",ev:"",obs:"",data:""}});
+ITENS.forEach(i=>{estado[i[0]]={st:"Pendente",ev:"",obs:"",data:"",img:""}});
+// URL bruta dos prints no repositório (funciona tanto no Pages quanto aberto localmente)
+const GH_RAW = (location.hostname.endsWith(".github.io"))
+  ? (location.pathname.split("/").filter(Boolean)[0]&&!location.pathname.split("/").filter(Boolean)[0].endsWith(".html")
+      ? "/"+location.pathname.split("/").filter(Boolean)[0]+"/"
+      : "/")
+  : "";
 
 // ---- Salvamento automático (armazenamento persistente do app) ----
 const CHAVE = "tac_verificacao_v1";
@@ -424,6 +441,13 @@ function cartao([n,txt,cl,setor,mpsc,obsM]){
     <div class="detalhes">
       <label>Observações</label>
       <textarea class="t-obs">${e.obs}</textarea>
+      <div class="print-area">
+        <label>Print de comprovação</label>
+        <div class="print-drop" tabindex="0">${e.img?`<img class="print-thumb" src="${GH_RAW}${e.img}?v=${Date.now()}" alt="print item ${n}">`:`<span class="print-hint">Cole o print aqui (Ctrl+V) ou toque para escolher</span>`}</div>
+        <input type="file" class="print-file" accept="image/*" hidden>
+        <div class="print-msg"></div>
+        ${e.img?`<button type="button" class="print-remover">Remover print</button>`:""}
+      </div>
       ${e.data?`<div class="data-verif">Verificado em ${e.data}</div>`:""}
     </div>`;
   div.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",()=>{
@@ -447,6 +471,64 @@ function cartao([n,txt,cl,setor,mpsc,obsM]){
     agendarSalvar();
   });
   div.querySelector(".t-obs").addEventListener("input",ev=>{e.obs=ev.target.value;agendarSalvar();});
+
+  // ---- Print de comprovação (comprime e sobe como arquivo no repositório) ----
+  const drop=div.querySelector(".print-drop");
+  const fileInp=div.querySelector(".print-file");
+  const msg=div.querySelector(".print-msg");
+  function setMsg(t,cls){ msg.textContent=t; msg.className="print-msg"+(cls?" "+cls:""); }
+
+  async function comprimir(file){
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    await new Promise((ok,err)=>{img.onload=ok;img.onerror=err;img.src=url;});
+    const maxW=1400;
+    const escala=Math.min(1,maxW/img.width);
+    const cv=document.createElement("canvas");
+    cv.width=Math.round(img.width*escala); cv.height=Math.round(img.height*escala);
+    cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+    URL.revokeObjectURL(url);
+    const dataUrl=cv.toDataURL("image/jpeg",0.72);
+    return dataUrl.split(",")[1]; // só o base64
+  }
+
+  async function enviarPrint(file){
+    if(!file || !file.type.startsWith("image/")){ setMsg("Isso não é uma imagem.","erro"); return; }
+    if(!SiteSync.hasToken()){ setMsg("Ative a sincronização (barra no rodapé) para guardar o print.","erro"); return; }
+    try{
+      setMsg("Comprimindo e enviando…","");
+      const b64=await comprimir(file);
+      const caminho="prints/item-"+String(n).padStart(2,"0")+".jpg";
+      await SiteSync.uploadFile(caminho,b64);
+      e.img=caminho;
+      agendarSalvar();
+      // troca a área pela miniatura
+      drop.innerHTML='<img class="print-thumb" src="'+GH_RAW+caminho+'?v='+Date.now()+'" alt="print item '+n+'">';
+      if(!div.querySelector(".print-remover")){
+        const b=document.createElement("button"); b.type="button"; b.className="print-remover"; b.textContent="Remover print";
+        b.addEventListener("click",removerPrint); div.querySelector(".print-area").append(b);
+      }
+      setMsg("Print salvo no repositório.","ok");
+    }catch(err){
+      setMsg(err.message==="auth"?"Token sem permissão de escrita.":"Falha ao enviar o print.","erro");
+    }
+  }
+  function removerPrint(){
+    e.img=""; agendarSalvar();
+    drop.innerHTML='<span class="print-hint">Cole o print aqui (Ctrl+V) ou toque para escolher</span>';
+    const rb=div.querySelector(".print-remover"); if(rb) rb.remove();
+    setMsg("Print removido da ficha (o arquivo continua no repositório até novo commit).","");
+  }
+
+  drop.addEventListener("click",()=>fileInp.click());
+  drop.addEventListener("keydown",ev=>{ if(ev.key==="Enter"||ev.key===" ") fileInp.click(); });
+  fileInp.addEventListener("change",ev=>{ if(ev.target.files[0]) enviarPrint(ev.target.files[0]); ev.target.value=""; });
+  drop.addEventListener("paste",ev=>{
+    const it=[...(ev.clipboardData&&ev.clipboardData.items||[])].find(x=>x.type.startsWith("image/"));
+    if(it){ ev.preventDefault(); enviarPrint(it.getAsFile()); }
+  });
+  const remBtn=div.querySelector(".print-remover"); if(remBtn) remBtn.addEventListener("click",removerPrint);
+
   return div;
 }
 
@@ -477,10 +559,10 @@ function baixar(nome,conteudo,tipo){
 }
 $("#btnCSV").addEventListener("click",()=>{
   const esc=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
-  const linhas=[["Nº","Item","Cláusula TAC","Setor","Avaliação MPSC","Verificação atual","Data","Evidência","Observações"].map(esc).join(";")];
+  const linhas=[["Nº","Item","Cláusula TAC","Setor","Avaliação MPSC","Verificação atual","Data","Evidência","Observações","Print"].map(esc).join(";")];
   ITENS.forEach(([n,txt,cl,setor,mpsc])=>{
     const e=estado[n];
-    linhas.push([n,txt,cl,setor,mpsc,e.st,e.data,e.ev,e.obs].map(esc).join(";"));
+    linhas.push([n,txt,cl,setor,mpsc,e.st,e.data,e.ev,e.obs,e.img?(GH_RAW+e.img):""].map(esc).join(";"));
   });
   baixar("verificacao_tac.csv","\uFEFF"+linhas.join("\r\n"),"text/csv;charset=utf-8");
 });
