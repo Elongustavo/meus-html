@@ -8,7 +8,7 @@
 window.SiteSync = (function () {
   const TOKEN_KEY = "gh_sync_token";
   const FILE_PATH = "data/marcacoes.json";
-  const DEBOUNCE_MS = 1500;
+  const DEBOUNCE_MS = 2000;
 
   let page = null;
   let onStatus = function () {};
