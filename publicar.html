@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publicar — Elon</title>
+<meta name="description" content="Envia arquivos HTML para o site e cria o card na página inicial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE9; --card:#FFFFFF; --ink:#1B1F24; --mute:#6A7076; --line:#DDD8CE;
+    --trabalho:#1E5C46; --estudo:#2B4C8C; --fe:#9A6B15; --pessoal:#175E63;
+    --ok:#1E7A46; --aviso:#B98A00; --erro:#C0392B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding:26px 16px 70px}
+  .wrap{max-width:640px;margin:0 auto}
+
+  header{margin-bottom:22px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;line-height:1.05;margin-top:6px}
+  h1 span{color:var(--fe)}
+  .sub{color:var(--mute);font-size:14px;margin-top:8px;max-width:46ch}
+  .voltar{display:inline-block;margin-top:14px;font-size:13px;color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line)}
+
+  .bloco{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+  .bloco.tracejado{border-style:dashed}
+  .bloco h2{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px}
+  .bloco p{font-size:13px;color:var(--mute);line-height:1.5}
+
+  .botoes{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;font-weight:600;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+  button.principal{background:var(--ink);color:#fff;border-color:var(--ink)}
+  button:disabled{opacity:.45;cursor:default}
+  button:focus-visible, input:focus-visible, select:focus-visible, label.arquivo:focus-within{outline:2px solid var(--fe);outline-offset:2px}
+
+  label.arquivo{display:block;text-align:center;padding:22px 14px;border:1px dashed var(--line);border-radius:12px;background:var(--card);cursor:pointer;font-weight:600;font-size:14px}
+  label.arquivo small{display:block;font-weight:400;color:var(--mute);font-size:12.5px;margin-top:4px}
+  label.arquivo input{position:absolute;width:1px;height:1px;opacity:0}
+
+  .item{position:relative;padding-left:14px}
+  .item .faixa{position:absolute;left:0;top:0;bottom:0;width:10px;border-radius:12px 0 0 12px}
+  .faixa.trabalho{background:var(--trabalho)} .faixa.estudo{background:var(--estudo)}
+  .faixa.fe{background:var(--fe)} .faixa.pessoal{background:var(--pessoal)}
+  .nomearq{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--mute);word-break:break-all}
+  .campo{margin-top:10px}
+  .campo span{display:block;font-size:12px;color:var(--mute);margin-bottom:4px}
+  input[type=text], select{width:100%;font:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink)}
+  .linha{display:flex;gap:8px}
+  .linha > div{flex:1;min-width:0}
+  .check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--mute)}
+  .check input{width:18px;height:18px;accent-color:var(--ink)}
+  .remover{margin-top:12px;font-size:12.5px;color:var(--erro);background:none;border:none;padding:0;font-weight:600}
+
+  #registro{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;margin-top:14px;white-space:pre-wrap;word-break:break-word}
+  #registro .ok{color:var(--ok)} #registro .erro{color:var(--erro)} #registro .aviso{color:var(--aviso)}
+  #estadoToken{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:10px}
+  #estadoToken.ok{color:var(--ok)} #estadoToken.aviso{color:var(--aviso)} #estadoToken.erro{color:var(--erro)}
+
+  footer{margin-top:30px;text-align:center;color:var(--mute);font-size:12px;font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Arquivo pessoal</div>
+    <h1>Publicar<span>.</span></h1>
+    <p class="sub">Escolha os arquivos HTML no aparelho. Eles vão para o repositório e o card entra na página inicial no mesmo envio.</p>
+    <a class="voltar" href="index.html">Ver os guias</a>
+  </header>
+
+  <label class="arquivo" id="rotuloArquivo">
+    Escolher arquivos
+    <small>HTML, imagens, KMZ — pode selecionar vários</small>
+    <input type="file" id="entrada" multiple>
+  </label>
+
+  <div id="fila"></div>
+
+  <div class="botoes" id="acoes" hidden>
+    <button class="principal" id="btnPublicar">Publicar</button>
+    <button id="btnLimpar">Limpar fila</button>
+  </div>
+
+  <div class="bloco tracejado" style="margin-top:20px">
+    <h2>Token deste aparelho</h2>
+    <p>É o mesmo token da sincronização das marcações. Fica salvo só neste aparelho e nunca vai para dentro do site.</p>
+    <div id="estadoToken">Verificando…</div>
+    <div class="botoes">
+      <button class="principal" id="btnToken">Colar token</button>
+      <button id="btnRemoverToken">Remover deste aparelho</button>
+    </div>
+  </div>
+
+  <div id="registro"></div>
+
+  <footer>elon · guias</footer>
+</div>
+
+<script>
+/* ---------------------------------------------------------------
+   Publicação de arquivos no repositório via API do GitHub.
+   Usa o mesmo token do SiteSync (localStorage: gh_sync_token).
+   --------------------------------------------------------------- */
+const TOKEN_KEY = "gh_sync_token";
+const ABAS = { trabalho:"Trabalho", estudo:"Estudos", fe:"Fé", pessoal:"Pessoal" };
+
+const $ = s => document.querySelector(s);
+const fila = [];
+
+/* ---- token e repositório ---- */
+function token(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+function setToken(t){ t && t.trim() ? localStorage.setItem(TOKEN_KEY, t.trim()) : localStorage.removeItem(TOKEN_KEY); }
+
+function repoInfo(){
+  const h = location.hostname;
+  if (!h.endsWith(".github.io")) return null;
+  const owner = h.split(".")[0];
+  const segs = location.pathname.split("/").filter(Boolean);
+  const repo = (segs.length === 0 || segs[0].endsWith(".html")) ? h : segs[0];
+  return { owner, repo };
+}
+function headers(){
+  return {
+    "Authorization": "Bearer " + token(),
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+}
+function urlDe(caminho){
+  const r = repoInfo();
+  if (!r) throw new Error("local");
+  return "https://api.github.com/repos/" + r.owner + "/" + r.repo + "/contents/" + caminho;
+}
+
+/* ---- base64 utf-8 ---- */
+function b64encode(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ""; const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  return btoa(bin);
+}
+function b64decode(b64){
+  const bin = atob(b64.replace(/\n/g, ""));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function b64DeArquivo(file){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(",")[1]);
+    r.onerror = () => rej(new Error("leitura"));
+    r.readAsDataURL(file);
+  });
+}
+
+/* ---- chamadas à API ---- */
+async function buscar(caminho){
+  const res = await fetch(urlDe(caminho) + "?t=" + Date.now(), { headers: headers() });
+  if (res.status === 404) return null;
+  if (res.status === 401 || res.status === 403) throw new Error("auth");
+  if (!res.ok) throw new Error("http-" + res.status);
+  return res.json();
+}
+async function enviar(caminho, base64, mensagem, sha){
+  const corpo = { message: mensagem, content: base64 };
+  if (sha) corpo.sha = sha;
+  const res = await fetch(urlDe(caminho), { method:"PUT", headers: headers(), body: JSON.stringify(corpo) });
+  if (res.status === 401 || res.status === 403) throw new Error("auth");
+  if (res.status === 409 || res.status === 422) throw new Error("conflito");
+  if (!res.ok) throw new Error("http-" + res.status);
+  return res.json();
+}
+
+/* ---- utilidades ---- */
+function nomeLimpo(nome){
+  return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9._-]/g, "").replace(/-+/g, "-");
+}
+function log(txt, cls){
+  const l = document.createElement("div");
+  if (cls) l.className = cls;
+  l.textContent = txt;
+  $("#registro").appendChild(l);
+  l.scrollIntoView({ block:"nearest" });
+}
+
+/* ---- fila de arquivos ---- */
+$("#entrada").addEventListener("change", async e => {
+  for (const file of e.target.files){
+    const arquivo = nomeLimpo(file.name);
+    const ehHtml = /\.html?$/.test(arquivo);
+    let titulo = file.name.replace(/\.[^.]+$/, ""), desc = "";
+    if (ehHtml){
+      const texto = await file.text();
+      const doc = new DOMParser().parseFromString(texto, "text/html");
+      if (doc.title) titulo = doc.title.split("—")[0].trim() || doc.title.trim();
+      const m = doc.querySelector('meta[name="description"]');
+      if (m) desc = m.content.trim();
+    }
+    fila.push({ file, arquivo, titulo, desc, aba:"trabalho", grupo:"Trabalho", card: ehHtml });
+  }
+  e.target.value = "";
+  desenhar();
+});
+
+function desenhar(){
+  const alvo = $("#fila");
+  alvo.innerHTML = "";
+  fila.forEach((it, i) => {
+    const bloco = document.createElement("div");
+    bloco.className = "bloco item";
+    bloco.innerHTML = `
+      <div class="faixa ${it.aba}"></div>
+      <div class="nomearq">${it.arquivo}</div>
+      <div class="check">
+        <input type="checkbox" id="c${i}" ${it.card ? "checked" : ""}>
+        <label for="c${i}">Criar card na página inicial</label>
+      </div>
+      <div class="detalhes" ${it.card ? "" : "hidden"}>
+        <div class="campo"><span>Título do card</span><input type="text" id="t${i}" value=""></div>
+        <div class="campo"><span>Descrição</span><input type="text" id="d${i}" value=""></div>
+        <div class="linha">
+          <div class="campo"><span>Grupo</span><input type="text" id="g${i}" value=""></div>
+          <div class="campo"><span>Cor</span>
+            <select id="a${i}">
+              <option value="trabalho">Trabalho — verde</option>
+              <option value="estudo">Estudo — azul</option>
+              <option value="fe">Fé — âmbar</option>
+              <option value="pessoal">Pessoal — teal</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button class="remover" id="r${i}">Tirar da fila</button>`;
+    alvo.appendChild(bloco);
+
+    $("#t"+i).value = it.titulo;
+    $("#d"+i).value = it.desc;
+    $("#g"+i).value = it.grupo;
+    $("#a"+i).value = it.aba;
+
+    $("#t"+i).addEventListener("input", e => it.titulo = e.target.value);
+    $("#d"+i).addEventListener("input", e => it.desc = e.target.value);
+    $("#g"+i).addEventListener("input", e => it.grupo = e.target.value);
+    $("#a"+i).addEventListener("change", e => {
+      it.aba = e.target.value;
+      bloco.querySelector(".faixa").className = "faixa " + it.aba;
+      if ($("#g"+i).value === "" || Object.values(ABAS).includes($("#g"+i).value)){
+        it.grupo = ABAS[it.aba]; $("#g"+i).value = it.grupo;
+      }
+    });
+    $("#c"+i).addEventListener("change", e => {
+      it.card = e.target.checked;
+      bloco.querySelector(".detalhes").hidden = !it.card;
+    });
+    $("#r"+i).addEventListener("click", () => { fila.splice(i,1); desenhar(); });
+  });
+  $("#acoes").hidden = fila.length === 0;
+}
+
+/* ---- montagem do card no index ---- */
+function porCard(doc, wrap, it){
+  const existente = wrap.querySelector('a.card[href="' + it.arquivo + '"]');
+  if (existente){
+    existente.querySelector(".titulo").textContent = it.titulo;
+    existente.querySelector(".desc").textContent = it.desc;
+    existente.querySelector(".aba").className = "aba " + it.aba;
+    return "atualizado";
+  }
+  const a = doc.createElement("a");
+  a.className = "card";
+  a.setAttribute("href", it.arquivo);
+  a.innerHTML = '\n    <div class="aba ' + it.aba + '"></div>\n    <div class="corpo">\n      <div class="titulo"></div>\n      <div class="desc"></div>\n    </div>\n  ';
+  a.querySelector(".titulo").textContent = it.titulo;
+  a.querySelector(".desc").textContent = it.desc;
+
+  const grupos = Array.from(wrap.querySelectorAll(".grupo"));
+  const alvo = grupos.find(g => g.textContent.trim().toLowerCase() === it.grupo.trim().toLowerCase());
+  if (alvo){
+    let ultimo = alvo, n = alvo.nextElementSibling;
+    while (n && n.classList && n.classList.contains("card")){ ultimo = n; n = n.nextElementSibling; }
+    ultimo.after(doc.createTextNode("\n  "), a);
+    return "adicionado";
+  }
+  const g = doc.createElement("div");
+  g.className = "grupo";
+  g.textContent = it.grupo;
+  let ref = wrap.querySelector(".sync");
+  for (const nd of wrap.childNodes){
+    if (nd.nodeType === 8 && nd.nodeValue.indexOf("MODELO") !== -1){ ref = nd; break; }
+  }
+  wrap.insertBefore(doc.createTextNode("\n  "), ref);
+  wrap.insertBefore(g, ref);
+  wrap.insertBefore(doc.createTextNode("\n  "), ref);
+  wrap.insertBefore(a, ref);
+  wrap.insertBefore(doc.createTextNode("\n\n  "), ref);
+  return "adicionado em grupo novo";
+}
+
+async function atualizarIndex(itens){
+  const atual = await buscar("index.html");
+  if (!atual) throw new Error("sem-index");
+  const bruto = b64decode(atual.content);
+  const doc = new DOMParser().parseFromString(bruto, "text/html");
+  const wrap = doc.querySelector(".wrap");
+  if (!wrap) throw new Error("index-inesperado");
+  // se o navegador entender menos cards do que o arquivo declara, há HTML inválido
+  // (link dentro de link, tag não fechada) e reescrever apagaria conteúdo.
+  const semComentarios = bruto.replace(/<!--[\s\S]*?-->/g, "");
+  const declarados = (semComentarios.match(/class="card"/g) || []).length;
+  if (wrap.querySelectorAll("a.card").length !== declarados) throw new Error("index-invalido");
+  for (const it of itens) log("  card: " + it.titulo + " — " + porCard(doc, wrap, it));
+  const saida = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML + "\n";
+  await enviar("index.html", b64encode(saida), "index: " + itens.map(i => i.arquivo).join(", "), atual.sha);
+}
+
+/* ---- publicação ---- */
+$("#btnPublicar").addEventListener("click", async () => {
+  if (!token()){ log("Sem token neste aparelho. Cole o token abaixo e tente de novo.", "erro"); return; }
+  if (!repoInfo()){ log("Esta página precisa ser aberta pelo endereço do site, não pelo arquivo local.", "erro"); return; }
+
+  $("#btnPublicar").disabled = true;
+  $("#registro").innerHTML = "";
+  const enviados = [];
+
+  for (const it of fila){
+    try {
+      log("Enviando " + it.arquivo + "…");
+      const existente = await buscar(it.arquivo);
+      const b64 = await b64DeArquivo(it.file);
+      await enviar(it.arquivo, b64, (existente ? "atualiza " : "publica ") + it.arquivo, existente && existente.sha);
+      log((existente ? "Atualizado: " : "Publicado: ") + it.arquivo, "ok");
+      enviados.push(it);
+    } catch (err){
+      log("Falhou " + it.arquivo + " — " + explicar(err), "erro");
+    }
+  }
+
+  const comCard = enviados.filter(i => i.card && i.titulo.trim());
+  if (comCard.length){
+    try {
+      log("Atualizando a página inicial…");
+      await atualizarIndex(comCard);
+      log("Página inicial atualizada.", "ok");
+    } catch (err){
+      log("A página inicial não foi atualizada — " + explicar(err), "erro");
+    }
+  }
+
+  if (enviados.length){
+    log("O GitHub Pages leva de 30 s a 2 min para publicar as mudanças.", "aviso");
+    fila.length = 0;
+    desenhar();
+  }
+  $("#btnPublicar").disabled = false;
+});
+
+function explicar(err){
+  const m = err && err.message;
+  if (m === "auth") return "o token não tem permissão de escrita ou expirou.";
+  if (m === "conflito") return "o arquivo mudou no repositório durante o envio; tente de novo.";
+  if (m === "local") return "abra pelo endereço do site.";
+  if (m === "sem-index") return "não encontrei o index.html no repositório.";
+  if (m === "index-inesperado") return "o index.html não tem a estrutura esperada.";
+  if (m === "index-invalido") return "o index.html tem HTML inválido e reescrevê-lo apagaria um card; o arquivo foi enviado, só o card não entrou.";
+  if (m === "leitura") return "não consegui ler o arquivo no aparelho.";
+  if (m && m.indexOf("http-") === 0) return "o GitHub respondeu " + m.slice(5) + ".";
+  return "sem conexão com o GitHub.";
+}
+
+$("#btnLimpar").addEventListener("click", () => { fila.length = 0; desenhar(); $("#registro").innerHTML = ""; });
+
+/* ---- estado do token ---- */
+function estado(){
+  const e = $("#estadoToken");
+  if (token()){ e.textContent = "Token salvo neste aparelho."; e.className = "ok"; }
+  else { e.textContent = "Sem token — cole o token para poder publicar."; e.className = "aviso"; }
+}
+$("#btnToken").addEventListener("click", () => {
+  const t = prompt("Cole aqui o seu token do GitHub (fica salvo só neste aparelho):");
+  if (t) setToken(t);
+  estado();
+});
+$("#btnRemoverToken").addEventListener("click", () => { setToken(""); estado(); });
+estado();
+</script>
+</body>
+</html>
